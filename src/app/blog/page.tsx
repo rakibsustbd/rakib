@@ -44,8 +44,8 @@ export default function BlogPage() {
     ? posts 
     : posts.filter(post => post.category === activeCategory || (activeCategory === 'ভাবনা' && post.category === 'গল্প ও ভাবনা'));
 
-  const featuredPosts = filteredPosts.slice(0, 5);
-  const archivePosts = filteredPosts.slice(5);
+  const featuredPosts = filteredPosts.filter(p => p.publish_date && p.publish_date !== 'অজানা তারিখ').slice(0, 5);
+  const archivePosts = filteredPosts.slice(featuredPosts.length);
 
   // Pagination logic for archive
   const indexOfLastPost = currentPage * postsPerPage;
@@ -130,7 +130,7 @@ export default function BlogPage() {
                    <div className="slider-overlay">
                       <div className="category-badge-pill bengali">{post.category}</div>
                       <div className="slider-content">
-                          <span className="slider-date"><Calendar size={14} /> {post.publish_date || 'সাম্প্রতিক'}</span>
+                          <span className="slider-date"><Calendar size={14} /> {post.publish_date && post.publish_date !== 'অজানা তারিখ' ? post.publish_date : 'সাম্প্রতিক'}</span>
                           <h3 className="slider-title bengali">{post.title}</h3>
                           <p className="slider-excerpt bengali">{post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে।'}</p>
 
@@ -173,7 +173,7 @@ export default function BlogPage() {
                 )}
               </div>
               <div className="archive-info">
-                <span className="post-date">{post.publish_date || 'সাম্প্রতিক'}</span>
+                <span className="post-date">{post.publish_date && post.publish_date !== 'অজানা তারিখ' ? post.publish_date : 'সাম্প্রতিক'}</span>
 
                 <h3 className="archive-title bengali">{post.title}</h3>
                 <p className="archive-text bengali">
