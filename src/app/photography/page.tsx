@@ -227,8 +227,8 @@ export default function PhotographyPage() {
 
         .banner-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          grid-template-rows: repeat(4, 1fr);
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(2, 1fr);
           height: 100%;
           opacity: 0.35;
           gap: 12px;
