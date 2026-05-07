@@ -32,8 +32,15 @@ export default function PhotographyPage() {
   // For the banner, pick 12 recent photos for a denser grid
   const bannerPhotos = photos.slice(0, 12);
 
-  // For the Photo Story slider, pick another set of photos
-  const storyPhotos = photos.slice(6, 16);
+  // For the Photo Story slider, we'll simulate stories by picking specific images
+  // In a real scenario, this would be a separate 'stories' table in Supabase
+  const storyCollections = [
+    { id: 'himalayan-dawn', title: 'Himalayan Dawn', category: 'Landscape', image: photos[6]?.image_url },
+    { id: 'urban-solitude', title: 'Urban Solitude', category: 'Street', image: photos[7]?.image_url },
+    { id: 'village-rhythm', title: 'Village Rhythm', category: 'Life', image: photos[8]?.image_url },
+    { id: 'mist-over-padma', title: 'Mist Over Padma', category: 'Nature', image: photos[9]?.image_url },
+    { id: 'dhaka-lights', title: 'Dhaka Lights', category: 'Urban', image: photos[10]?.image_url },
+  ];
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -72,17 +79,17 @@ export default function PhotographyPage() {
         
         <div className="stories-slider">
           <div className="stories-track">
-            {storyPhotos.map((photo, index) => (
+            {storyCollections.map((story, index) => (
               <div 
-                key={photo.id} 
+                key={story.id} 
                 className={`story-card ${index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'wide' : 'small'}`}
               >
-                <Link href={`/photography/${photo.id}`}>
+                <Link href={`/photography/story/${story.id}`}>
                   <div className="story-img-container">
-                    <img src={photo.local_path || photo.image_url} alt={photo.title} />
+                    <img src={story.image || 'linear-gradient(135deg, #050505 0%, #064e3b 100%)'} alt={story.title} />
                     <div className="story-hover-info">
-                      <span className="story-cat">Visual Essay</span>
-                      <h4 className="story-title-mini">{photo.title}</h4>
+                      <span className="story-cat">Photo Story</span>
+                      <h4 className="story-title-mini">{story.title}</h4>
                     </div>
                   </div>
                 </Link>
@@ -114,7 +121,8 @@ export default function PhotographyPage() {
                       style={{ 
                         backgroundImage: `url('${photo.local_path || photo.image_url}')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundPosition: 'center',
+                        backgroundColor: '#050505' // Fallback base
                       }}
                     >
                       <div className="photo-overlay-simple">

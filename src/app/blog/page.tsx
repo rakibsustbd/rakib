@@ -18,7 +18,8 @@ export default function BlogPage() {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .order('id', { ascending: true }); // Using ID to maintain our original order
+        .neq('title', 'আড্ডা পুষ্ট --কেডা কেডা আছেন? ব্যস্ততার কারনে মেলাদিন পর ব্লগে আসছেন? (সাময়িক)') // Filtering out the unwanted post
+        .order('id', { ascending: true });
 
       if (data) {
         setPosts(data);
@@ -107,9 +108,10 @@ export default function BlogPage() {
                 <div 
                   className="slider-card-image-bg" 
                   style={{ 
-                    backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #111 0%, #1a2a22 100%)',
+                    backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #050505 0%, #064e3b 100%)', // Signature Green Fallback
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundPosition: 'center',
+                    border: !post.image_url ? '1px solid var(--accent-green)' : 'none'
                   }}
                 >
                    <div className="slider-overlay">
@@ -139,12 +141,13 @@ export default function BlogPage() {
         <div className="archive-grid">
           {currentArchivePosts.map((post) => (
             <div key={post.id} className="archive-card animate-fade-in">
-              <div 
+               <div 
                 className="archive-img-wrap glass-card"
                 style={{ 
-                  backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #111 0%, #1a2a22 100%)',
+                  backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #050505 0%, #064e3b 100%)', // Signature Green Fallback
                   backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  backgroundPosition: 'center',
+                  border: !post.image_url ? '1px solid var(--accent-green)' : 'none'
                 }}
               >
               </div>
