@@ -84,7 +84,14 @@ export default function BlogPage() {
           <div className="featured-slider-track">
             {featuredPosts.map((post) => (
               <div key={post.id} className="featured-slider-item">
-                <div className="slider-card-image-bg" style={{ backgroundImage: `url(${post.image_url || '/blog_post_1.jpg'})` }}>
+                <div 
+                  className="slider-card-image-bg" 
+                  style={{ 
+                    backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #111 0%, #1a2a22 100%)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                >
                    <div className="slider-overlay">
                       <div className="category-badge-pill bengali">{post.category}</div>
                       <div className="slider-content">
@@ -112,8 +119,14 @@ export default function BlogPage() {
         <div className="archive-grid">
           {archivePosts.map((post) => (
             <div key={post.id} className="archive-card">
-              <div className="archive-img-wrap glass-card">
-                {/* Image placeholder */}
+              <div 
+                className="archive-img-wrap glass-card"
+                style={{ 
+                  backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #111 0%, #1a2a22 100%)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
               </div>
               <div className="archive-info">
                 <span className="post-date">{post.publish_date}</span>
