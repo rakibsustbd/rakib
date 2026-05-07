@@ -11,6 +11,14 @@ export default function PhotographyPage() {
   const [photos, setPhotos] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeStory, setActiveStory] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveStory((prev) => (prev + 1) % 5);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     async function fetchPhotos() {
@@ -44,10 +52,15 @@ export default function PhotographyPage() {
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    const element = document.getElementById('archive-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Use a small delay to ensure rendering completes before scrolling
+    setTimeout(() => {
+      const element = document.getElementById('archive-grid-start');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 400, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   return (
@@ -70,37 +83,59 @@ export default function PhotographyPage() {
         </div>
       </div>
 
-      {/* Photo Stories Section (Pinterest Style Slider) */}
-      <div className="stories-section">
+      {/* Photo Stories Section (Split Layout Slider) */}
+      <div className="photography-stories-slider-container">
         <div className="section-header">
-          <h2 className="section-label">Photo Stories</h2>
-          <span className="scroll-hint">Scroll to explore →</span>
-        </div>
-        
-        <div className="stories-slider">
-          <div className="stories-track">
-            {storyCollections.map((story, index) => (
-              <div 
-                key={story.id} 
-                className={`story-card ${index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'wide' : 'small'}`}
-              >
-                <Link href={`/photography/story/${story.id}`}>
-                  <div className="story-img-container">
-                    <img src={story.image || 'linear-gradient(135deg, #050505 0%, #064e3b 100%)'} alt={story.title} />
-                    <div className="story-hover-info">
-                      <span className="story-cat">Photo Story</span>
-                      <h4 className="story-title-mini">{story.title}</h4>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+          <h2 className="section-label">Featured Stories</h2>
+          <div className="slider-dots">
+            {storyCollections.map((_, i) => (
+              <button 
+                key={i} 
+                className={`dot ${activeStory === i ? 'active' : ''}`}
+                onClick={() => setActiveStory(i)}
+              />
             ))}
+          </div>
+        </div>
+
+        <div className="split-slider">
+          {/* Left Side: Content */}
+          <div className="slider-left animate-slide-in">
+            <div className="story-content-box">
+              <span className="story-cat-tag">{storyCollections[activeStory].category}</span>
+              <h2 className="story-display-title">{storyCollections[activeStory].title}</h2>
+              <p className="story-display-desc">
+                {activeStory === 0 && "A journey through the silent peaks of the Annapurna range as the first light breaks."}
+                {activeStory === 1 && "Finding peace in the chaotic heart of Dhaka through minimalist street perspectives."}
+                {activeStory === 2 && "The simple, unhurried life along the banks of the Shitalakshya river."}
+                {activeStory === 3 && "Morning mist drifting over the vast delta as fishermen begin their day."}
+                {activeStory === 4 && "The vibrant neon pulse of Dhaka's midnight streets captured in motion."}
+              </p>
+              <Link href={`/photography/story/${storyCollections[activeStory].id}`} className="explore-story-btn">
+                Explore Story <ChevronRight size={18} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Side: Photo Cluster */}
+          <div className="slider-right">
+             <div className="photo-cluster">
+                <div className="cluster-item item-1">
+                  <img src={photos[activeStory + 2]?.image_url} alt="Cluster 1" />
+                </div>
+                <div className="cluster-item item-2">
+                  <img src={photos[activeStory + 5]?.image_url} alt="Cluster 2" />
+                </div>
+                <div className="cluster-item item-3">
+                  <img src={photos[activeStory]?.image_url} alt="Cluster 3" />
+                </div>
+             </div>
           </div>
         </div>
       </div>
 
       {/* Archive Grid */}
-      <div id="archive-section" className="photography-archive-section">
+      <div id="archive-grid-start" className="photography-archive-section">
         <div className="section-header">
           <h2 className="section-label">Archive</h2>
           <span className="photo-count-badge">{photos.length} Photos</span>
@@ -214,102 +249,151 @@ export default function PhotographyPage() {
           object-fit: cover;
         }
 
-        .stories-section {
-          margin-bottom: 80px;
+        .photography-stories-slider-container {
+          margin-bottom: 100px;
+          position: relative;
         }
 
-        .scroll-hint {
-          font-size: 0.8rem;
-          color: var(--text-muted);
+        .slider-dots {
+          display: flex;
+          gap: 8px;
+        }
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.2);
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .dot.active {
+          background: var(--accent-green);
+          width: 24px;
+          border-radius: 4px;
+        }
+
+        .split-slider {
+          display: grid;
+          grid-template-columns: 1fr 1.2fr;
+          gap: 60px;
+          align-items: center;
+          min-height: 500px;
+        }
+
+        .story-content-box {
+          padding-right: 40px;
+        }
+
+        .story-cat-tag {
+          color: var(--accent-green);
+          font-size: 0.85rem;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.1em;
+          margin-bottom: 16px;
+          display: block;
         }
 
-        .stories-slider {
-          width: 100vw;
-          margin-left: calc(-50vw + 50%);
-          overflow-x: auto;
-          padding: 20px 40px 40px;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+        .story-display-title {
+          font-size: 4.5rem;
+          font-weight: 800;
+          line-height: 1;
+          margin-bottom: 24px;
+          letter-spacing: -0.05em;
+          color: #fff;
         }
 
-        .stories-slider::-webkit-scrollbar {
-          display: none;
+        .story-display-desc {
+          font-size: 1.1rem;
+          color: var(--text-secondary);
+          line-height: 1.6;
+          margin-bottom: 40px;
+          max-width: 450px;
         }
 
-        .stories-track {
-          display: flex;
-          gap: 24px;
-          width: max-content;
+        .explore-story-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          background: var(--accent-green);
+          color: #000;
+          padding: 14px 32px;
+          border-radius: 100px;
+          font-weight: 700;
+          text-decoration: none;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .story-card {
-          border-radius: 28px;
-          overflow: hidden;
+        .explore-story-btn:hover {
+          transform: scale(1.05);
+          box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .slider-right {
           position: relative;
-          background: #111;
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-          cursor: pointer;
-          border: 1px solid rgba(255,255,255,0.05);
+          height: 550px;
         }
 
-        .story-card.tall { width: 320px; height: 480px; transform: translateY(0px); }
-        .story-card.wide { width: 440px; height: 350px; transform: translateY(80px); }
-        .story-card.small { width: 280px; height: 380px; transform: translateY(40px); }
-
-        .story-card:hover {
-          transform: translateY(-10px) scale(1.02) !important;
-          border-color: var(--accent-green);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-          z-index: 10;
-        }
-
-        .story-img-container {
+        .photo-cluster {
+          position: relative;
           width: 100%;
           height: 100%;
-          position: relative;
         }
 
-        .story-img-container img {
+        .cluster-item {
+          position: absolute;
+          border-radius: 24px;
+          overflow: hidden;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+          border: 1px solid rgba(255,255,255,0.1);
+          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cluster-item img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.8s ease;
         }
 
-        .story-card:hover img {
-          transform: scale(1.1);
+        .item-1 {
+          width: 300px;
+          height: 400px;
+          top: 0;
+          left: 50px;
+          z-index: 2;
         }
 
-        .story-hover-info {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 30px;
-          opacity: 0;
-          transition: opacity 0.4s ease;
+        .item-2 {
+          width: 320px;
+          height: 240px;
+          bottom: 40px;
+          right: 0;
+          z-index: 3;
         }
 
-        .story-card:hover .story-hover-info {
-          opacity: 1;
+        .item-3 {
+          width: 200px;
+          height: 200px;
+          top: 60px;
+          right: 40px;
+          z-index: 1;
+          opacity: 0.6;
         }
 
-        .story-cat {
-          color: var(--accent-green);
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          font-weight: 700;
-          margin-bottom: 8px;
-        }
-
-        .story-title-mini {
-          color: #fff;
-          font-size: 1.2rem;
-          margin: 0;
+        @media (max-width: 1024px) {
+          .split-slider {
+            grid-template-columns: 1fr;
+            text-align: center;
+          }
+          .story-content-box { padding-right: 0; margin-bottom: 40px; }
+          .story-display-desc { margin: 0 auto 40px; }
+          .slider-right { height: 400px; }
+          .item-1 { width: 200px; height: 280px; left: 0; }
+          .item-2 { width: 220px; height: 160px; }
+          .story-display-title { font-size: 3rem; }
         }
 
         .banner-item {
