@@ -17,10 +17,12 @@ export default function BlogPostPage() {
     async function fetchPost() {
       if (!params?.slug) return;
       
+      const decodedSlug = decodeURIComponent(params.slug as string);
+      
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('slug', params.slug)
+        .eq('slug', decodedSlug)
         .single();
 
       if (data) {
