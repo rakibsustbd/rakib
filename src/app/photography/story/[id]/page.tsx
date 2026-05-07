@@ -271,7 +271,6 @@ export default function PhotoStoryDetailPage() {
           .frame-center-title { grid-column: span 1; }
           .story-main-title { font-size: 2rem; }
         }
-      `}</style>
 
         .loading {
           height: 60vh;
@@ -280,11 +279,6 @@ export default function PhotoStoryDetailPage() {
           justify-content: center;
           color: var(--accent-green);
           font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-          .story-main-title { font-size: 2.5rem; }
-          .story-masonry-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </div>
