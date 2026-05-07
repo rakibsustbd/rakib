@@ -64,11 +64,10 @@ export default function BlogPostPage() {
            <div className="image-overlay-subtle"></div>
         </div>
 
-        <div className="post-content bengali">
-          {post.content ? post.content.split('\n').map((para: string, i: number) => (
-            <p key={i}>{para}</p>
-          )) : <p>এই পোস্টের বিস্তারিত লেখা এখনো যোগ করা হয়নি।</p>}
-        </div>
+        <div 
+          className="post-content bengali"
+          dangerouslySetInnerHTML={{ __html: post.content || '<p>এই পোস্টের বিস্তারিত লেখা এখনো যোগ করা হয়নি।</p>' }}
+        />
 
         <footer className="post-footer">
           <div className="post-actions">

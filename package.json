@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3",
+    "axios": "^1.16.0",
+    "cheerio": "^1.2.0",
     "clsx": "latest",
     "dotenv": "^17.4.2",
     "framer-motion": "latest",
