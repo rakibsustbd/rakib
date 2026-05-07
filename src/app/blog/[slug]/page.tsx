@@ -62,15 +62,33 @@ export default function BlogPostPage() {
             </div>
           </header>
 
-        <div className="post-featured-image glass-card" style={post.image_url ? { backgroundImage: `url(${post.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
-           {/* Image placeholder */}
-           <div className="image-overlay-subtle"></div>
-        </div>
+        {(() => {
+          let heroImage = post.image_url;
+          let displayContent = post.content || '<p>এই পোস্টের বিস্তারিত লেখা এখনো যোগ করা হয়নি।</p>';
+          
+          // If the heroImage is a placeholder or we want to pull the real image from content
+          const imgMatch = displayContent.match(/<img[^>]+src="([^">]+)"/);
+          if (imgMatch) {
+            heroImage = imgMatch[1]; // Use the first embedded image as the hero
+            displayContent = displayContent.replace(/<img[^>]+>/, ''); // Remove it from the body
+          }
 
-        <div 
-          className="post-content bengali"
-          dangerouslySetInnerHTML={{ __html: post.content || '<p>এই পোস্টের বিস্তারিত লেখা এখনো যোগ করা হয়নি।</p>' }}
-        />
+          // If there's STILL no hero image, don't show the black box at all
+          return (
+            <>
+              {heroImage && !heroImage.includes('blog_post_') && (
+                <div className="post-featured-image glass-card" style={{ backgroundImage: `url('${heroImage}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                   <div className="image-overlay-subtle"></div>
+                </div>
+              )}
+      
+              <div 
+                className="post-content bengali"
+                dangerouslySetInnerHTML={{ __html: displayContent }}
+              />
+            </>
+          );
+        })()}
 
         <footer className="post-footer">
           <div className="post-actions">
