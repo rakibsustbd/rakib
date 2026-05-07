@@ -1,220 +1,360 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, BookOpen, Camera, ExternalLink } from 'lucide-react';
-import { useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Loader2, Calendar, Camera, Heart, MessageSquare } from 'lucide-react';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+
+const PHOTOS_PER_PAGE = 15;
 
 export default function PhotographyPage() {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const galleryImages = [
-    { id: 1, url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80', title: 'Everest Twilight', location: 'Solukhumbu, Nepal' },
-    { id: 2, url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', title: 'Annapurna Range', location: 'Gandaki, Nepal' },
-    { id: 3, url: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1200&q=80', title: 'City Lights', location: 'Dhaka, Bangladesh' },
-  ];
-
-  const archiveImages = [
-    { id: 4, url: 'https://images.unsplash.com/photo-1470252649358-96957c053e9a?auto=format&fit=crop&w=800&q=80', title: 'Mountain Mist' },
-    { id: 5, url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80', title: 'Reflections' },
-    { id: 6, url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80', title: 'Peaks' },
-    { id: 7, url: 'https://images.unsplash.com/photo-1519681393784-d120267953ba?auto=format&fit=crop&w=800&q=80', title: 'Starry Night' },
-    { id: 8, url: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80', title: 'Nature Echo' },
-    { id: 9, url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80', title: 'Forest Path' },
-  ];
-
-  const photoStories = [
-    { id: 1, title: 'The Silence of Mountains', cover: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80', pages: 12 },
-    { id: 2, title: 'City of Dreams', cover: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80', pages: 24 },
-    { id: 3, title: 'Lost in Wilderness', cover: 'https://images.unsplash.com/photo-1470252649358-96957c053e9a?auto=format&fit=crop&w=800&q=80', pages: 18 },
-  ];
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+  useEffect(() => {
+    async function fetchPhotos() {
+      const { data } = await supabase
+        .from('photos')
+        .select('*')
+        .order('publish_date', { ascending: false });
+      if (data) setPhotos(data);
+      setIsLoading(false);
     }
+    fetchPhotos();
+  }, []);
+
+  const totalPages = Math.ceil(photos.length / PHOTOS_PER_PAGE);
+  const indexOfLastPhoto = currentPage * PHOTOS_PER_PAGE;
+  const indexOfFirstPhoto = indexOfLastPhoto - PHOTOS_PER_PAGE;
+  const currentPhotos = photos.slice(indexOfFirstPhoto, indexOfLastPhoto);
+
+  // For the banner, pick 6 recent photos
+  const bannerPhotos = photos.slice(0, 6);
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
   return (
     <div className="container animate-fade-in">
-      <header className="intro-section">
-        <h1 className="intro-title">Photography</h1>
-        <p className="intro-desc">
-          Capturing light, shadows, and the essence of time. A journey through lenses and landscapes.
-        </p>
-      </header>
-
-      <section className="display-slider">
-        <div className="slider-controls">
-          <button onClick={() => scroll('left')} className="slider-btn"><ChevronLeft /></button>
-          <button onClick={() => scroll('right')} className="slider-btn"><ChevronRight /></button>
+      
+      {/* Photo Hero Banner (Similar to Blog Statement Banner but with photos) */}
+      <div className="photography-hero-banner glass-card">
+        <div className="banner-grid">
+           {bannerPhotos.map((p) => (
+             <div key={p.id} className="banner-item">
+               <img src={p.local_path || p.image_url} alt={p.title} />
+             </div>
+           ))}
+           {bannerPhotos.length === 0 && (
+             <div className="banner-placeholder">
+               <Camera size={48} color="rgba(255,255,255,0.1)" />
+             </div>
+           )}
         </div>
-        <div className="slider-track" ref={scrollRef}>
-          {galleryImages.map((img) => (
-            <div key={img.id} className="slider-item gallery-item glass-card">
-              <div className="gallery-img">
-                <img src={img.url} alt={img.title} />
-                <div className="gallery-overlay">
-                  <h3 className="gallery-title">{img.title}</h3>
-                  <p className="gallery-location">{img.location}</p>
+        <div className="banner-overlay">
+          <div className="banner-content">
+             <h1 className="banner-title">Visual Archive</h1>
+             <p className="banner-subtitle">Capturing moments through the lens of time.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Archive Grid - Matching Blog Style */}
+      <div className="photography-archive-section">
+        <div className="section-header">
+          <h2 className="section-label">Archive</h2>
+          <span className="photo-count-badge">{photos.length} Photos</span>
+        </div>
+        
+        {isLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}>
+            <Loader2 className="animate-spin" size={40} color="var(--accent-green)" />
+          </div>
+        ) : (
+          <>
+            <div className="photo-grid">
+              {currentPhotos.map((photo) => (
+                <div key={photo.id} className="photo-archive-card animate-fade-in">
+                  <Link href={`/photography/${photo.id}`}>
+                    <div 
+                      className="photo-img-wrap glass-card"
+                      style={{ 
+                        backgroundImage: `url('${photo.local_path || photo.image_url}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    >
+                      <div className="photo-overlay-simple">
+                         <div className="photo-stats-mini">
+                            <span><Heart size={14} /> {photo.likes || 0}</span>
+                            <span><MessageSquare size={14} /> 0</span>
+                         </div>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="photo-info">
+                    <span className="photo-date">{new Date(photo.publish_date).toLocaleDateString()}</span>
+                    <h3 className="photo-title bengali">{photo.title}</h3>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
 
-      <section className="mb-100">
-        <h2 className="archive-heading">Photo Stories</h2>
-        <div className="story-grid">
-          {photoStories.map((story) => (
-            <div key={story.id} className="story-card glass-card">
-              <div className="story-cover">
-                <img src={story.cover} alt={story.title} />
-                <div className="story-icon">
-                  <BookOpen size={24} />
-                </div>
-              </div>
-              <div className="story-info">
-                <h3 className="story-title">{story.title}</h3>
-                <p className="story-meta">{story.pages} Photos • Visual Essay</p>
-                <button className="read-story-btn">
-                  View Story <ExternalLink size={14} />
+            {/* Pagination Controls - Same as Blog */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button 
+                  className={`page-btn prev ${currentPage === 1 ? 'disabled' : ''}`}
+                  onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                
+                {[...Array(totalPages)].map((_, i) => (
+                  <button 
+                    key={i + 1}
+                    className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
+                    onClick={() => paginate(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+
+                <button 
+                  className={`page-btn next ${currentPage === totalPages ? 'disabled' : ''}`}
+                  onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight size={18} />
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="archive-section">
-        <h2 className="archive-heading">Visual Archive</h2>
-        <div className="archive-grid">
-          {archiveImages.map((img) => (
-            <div key={img.id} className="archive-card photography-card">
-              <div className="archive-img-wrap" style={{ aspectRatio: '1' }}>
-                <img src={img.url} alt={img.title} />
-                <div className="photo-label">{img.title}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className="photography-footer">
-        <p>Explore more on <a href="https://www.flickr.com/photos/rakiiiiiiib/" target="_blank" rel="noopener noreferrer" className="accent-link">Flickr Archive</a></p>
+            )}
+          </>
+        )}
       </div>
 
       <style jsx>{`
-        .mb-100 { margin-bottom: 100px; }
-        .archive-heading {
-          font-size: 2.5rem;
-          margin-bottom: 40px;
-          letter-spacing: -0.04em;
-        }
-        .gallery-item {
-          padding: 0;
-          overflow: hidden;
-          border-radius: 24px;
-        }
-        .gallery-img {
-          position: relative;
+        .photography-hero-banner {
           width: 100%;
-          aspect-ratio: 16/9;
+          height: 300px;
+          margin-bottom: 60px;
+          position: relative;
+          background: #000;
+          border-radius: 24px;
+          overflow: hidden;
+          border: 1px solid rgba(16, 185, 129, 0.1);
         }
-        .gallery-img img {
+
+        .banner-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-template-rows: repeat(2, 1fr);
+          height: 100%;
+          opacity: 0.4;
+        }
+
+        .banner-item {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        .banner-item img {
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        .gallery-overlay {
+
+        .banner-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 40px;
-        }
-        .gallery-title { font-size: 2rem; }
-        .slider-controls {
-          position: absolute;
-          top: -60px;
-          right: 0;
-          display: flex;
-          gap: 12px;
-        }
-        .slider-btn {
-          background: var(--bg-card);
-          border: 1px solid var(--border-color);
-          color: white;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
+          background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
           display: flex;
           align-items: center;
           justify-content: center;
-          cursor: pointer;
+          text-align: center;
         }
-        .slider-btn:hover { background: var(--accent-green); }
-        
-        .story-grid {
+
+        .banner-title {
+          font-size: 3.5rem;
+          font-weight: 800;
+          color: #fff;
+          margin-bottom: 12px;
+          letter-spacing: -0.04em;
+        }
+
+        .banner-subtitle {
+          color: var(--accent-green);
+          font-size: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          font-weight: 500;
+        }
+
+        .photography-archive-section {
+          margin-bottom: 100px;
+        }
+
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 32px;
+          border-bottom: 1px solid var(--border-color);
+          padding-bottom: 16px;
+        }
+
+        .photo-count-badge {
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--accent-green);
+          padding: 6px 16px;
+          border-radius: 100px;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+
+        .photo-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 32px;
         }
-        .story-card { padding: 0; overflow: hidden; }
-        .story-cover {
-          position: relative;
-          aspect-ratio: 4/5;
+
+        .photo-archive-card {
+          background: rgba(255,255,255,0.01);
+          padding: 12px;
+          border-radius: 20px;
+          transition: all 0.4s ease;
         }
-        .story-cover img { width: 100%; height: 100%; object-fit: cover; }
-        .story-icon {
+
+        .photo-archive-card:hover {
+          background: rgba(255,255,255,0.03);
+          transform: translateY(-5px);
+        }
+
+        .photo-img-wrap {
+          width: 100%;
+          height: 220px; /* Fixed height landscape aspect */
+          border-radius: 14px;
+          overflow: hidden;
+          margin-bottom: 16px;
+          position: relative;
+          cursor: pointer;
+        }
+
+        .photo-overlay-simple {
           position: absolute;
-          top: 20px;
-          right: 20px;
-          background: var(--accent-green);
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
+          inset: 0;
+          background: rgba(0,0,0,0.3);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          display: flex;
+          align-items: flex-end;
+          padding: 16px;
+        }
+
+        .photo-img-wrap:hover .photo-overlay-simple {
+          opacity: 1;
+        }
+
+        .photo-stats-mini {
+          display: flex;
+          gap: 16px;
+          color: #fff;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+
+        .photo-stats-mini span {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .photo-info {
+          padding: 0 4px;
+        }
+
+        .photo-date {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+          display: block;
+          margin-bottom: 6px;
+        }
+
+        .photo-title {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          line-height: 1.4;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        /* Pagination - matching blog styles exactly */
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          margin-top: 60px;
+        }
+
+        .page-btn {
+          width: 40px;
+          height: 40px;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 0 20px var(--accent-green-glow);
-        }
-        .story-info { padding: 24px; }
-        .story-title { font-size: 1.25rem; margin-bottom: 8px; }
-        .story-meta { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 20px; }
-        .read-story-btn {
+          border-radius: 10px;
+          border: 1px solid var(--border-color);
           background: transparent;
-          border: 1px solid var(--accent-green);
-          color: var(--accent-green);
-          padding: 8px 16px;
-          border-radius: 8px;
+          color: var(--text-secondary);
           font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 8px;
           cursor: pointer;
-          transition: var(--transition-smooth);
+          transition: all 0.3s ease;
         }
-        .read-story-btn:hover { background: var(--accent-green); color: white; }
 
-        .photography-card {
-          position: relative;
+        .page-btn:hover {
+          background: rgba(255,255,255,0.05);
+          color: var(--text-primary);
+          border-color: rgba(255,255,255,0.2);
         }
-        .photo-label {
-          position: absolute;
-          bottom: 20px;
-          left: 20px;
-          font-size: 0.75rem;
-          background: rgba(0,0,0,0.5);
-          padding: 4px 10px;
-          border-radius: 4px;
-          opacity: 0;
-          transition: var(--transition-smooth);
+
+        .page-btn.active {
+          background: var(--accent-green);
+          color: #000;
+          border-color: var(--accent-green);
         }
-        .archive-card:hover .photo-label { opacity: 1; }
+
+        .page-btn.prev, .page-btn.next {
+          width: 40px;
+        }
+
+        .page-btn.disabled {
+          opacity: 0.2;
+          cursor: not-allowed;
+          pointer-events: none;
+        }
+
+        @media (max-width: 1024px) {
+          .photo-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .photo-grid {
+            grid-template-columns: 1fr;
+          }
+          .banner-title {
+            font-size: 2.2rem;
+          }
+        }
       `}</style>
     </div>
   );

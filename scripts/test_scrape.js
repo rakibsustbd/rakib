@@ -1,12 +1,8 @@
 const axios = require('axios');
-const cheerio = require('cheerio');
 
 async function test() {
-  const { data } = await axios.get('https://www.somewhereinblog.net/blog/DeathLucifer/29948345');
-  const $ = cheerio.load(data);
-  console.log('.post-content length:', $('.post-content').html() ? $('.post-content').html().length : 0);
-  console.log('.post-body length:', $('.post-body').html() ? $('.post-body').html().length : 0);
-  console.log('.blog-content length:', $('.blog-content').html() ? $('.blog-content').html().length : 0);
-  console.log('p length in blog-content:', $('.blog-content p').length);
+  const url = 'https://www.somewhereinblog.net/blogger-posts/23704/23703/29135329';
+  const { data } = await axios.get(url);
+  console.log(typeof data === 'object' ? JSON.stringify(data).substring(0, 500) : data.substring(0, 500));
 }
 test();

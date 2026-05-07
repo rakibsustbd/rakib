@@ -10,6 +10,8 @@ export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState('সব');
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 12;
 
   useEffect(() => {
     async function fetchPosts() {
@@ -36,8 +38,23 @@ export default function BlogPage() {
     { id: 'country', label: 'দেশ' },
   ];
 
-  const featuredPosts = posts.slice(0, 5);
-  const archivePosts = posts.slice(5);
+  const filteredPosts = activeCategory === 'সব' 
+    ? posts 
+    : posts.filter(post => post.category === activeCategory || (activeCategory === 'ভাবনা' && post.category === 'গল্প ও ভাবনা'));
+
+  const featuredPosts = filteredPosts.slice(0, 5);
+  const archivePosts = filteredPosts.slice(5);
+
+  // Pagination logic for archive
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentArchivePosts = archivePosts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(archivePosts.length / postsPerPage);
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 800, behavior: 'smooth' });
+  };
 
   return (
     <div className="container animate-fade-in">
@@ -58,7 +75,10 @@ export default function BlogPage() {
             <button
               key={cat.id}
               className={`category-item ${activeCategory === cat.label ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat.label)}
+              onClick={() => {
+                setActiveCategory(cat.label);
+                setCurrentPage(1);
+              }}
             >
               {cat.label}
             </button>
@@ -117,8 +137,8 @@ export default function BlogPage() {
         </div>
         
         <div className="archive-grid">
-          {archivePosts.map((post) => (
-            <div key={post.id} className="archive-card">
+          {currentArchivePosts.map((post) => (
+            <div key={post.id} className="archive-card animate-fade-in">
               <div 
                 className="archive-img-wrap glass-card"
                 style={{ 
@@ -142,18 +162,79 @@ export default function BlogPage() {
           ))}
         </div>
 
-        {/* Pagination */}
-        <div className="pagination">
-          <button className="page-btn active">1</button>
-          <button className="page-btn">2</button>
-          <button className="page-btn">3</button>
-          <button className="page-btn next">
-            Next <ArrowRight size={16} />
-          </button>
-        </div>
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button 
+              className={`page-btn prev ${currentPage === 1 ? 'disabled' : ''}`}
+              onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            
+            {[...Array(totalPages)].map((_, i) => (
+              <button 
+                key={i + 1}
+                className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
+                onClick={() => paginate(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button 
+              className={`page-btn next ${currentPage === totalPages ? 'disabled' : ''}`}
+              onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
+        .blog-archive-section {
+          margin-top: 100px;
+          margin-bottom: 120px;
+        }
+
+        .archive-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 40px;
+          align-items: stretch;
+        }
+
+        .archive-card {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          background: rgba(255,255,255,0.01);
+          padding: 16px;
+          border-radius: 24px;
+          border: 1px solid transparent;
+          transition: all 0.4s ease;
+        }
+
+        .archive-card:hover {
+          background: rgba(255,255,255,0.03);
+          border-color: rgba(16, 185, 129, 0.2);
+          transform: translateY(-8px);
+        }
+
+        .archive-img-wrap {
+          width: 100%;
+          height: 240px; /* Fixed height to ensure consistency */
+          border-radius: 16px;
+          overflow: hidden;
+          margin-bottom: 20px;
+          border: 1px solid var(--border-color);
+          flex-shrink: 0;
+          background-color: #111;
+        }
+
         .blog-banner-wrap {
           width: 100%;
           border-radius: 24px;
@@ -316,10 +397,16 @@ export default function BlogPage() {
           border-color: var(--accent-green);
         }
 
-        .page-btn.next {
+        .page-btn.prev, .page-btn.next {
           width: auto;
           padding: 0 20px;
           gap: 8px;
+        }
+
+        .page-btn.disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+          pointer-events: none;
         }
 
         .category-menu {
