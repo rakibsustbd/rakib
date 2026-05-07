@@ -1,12 +1,31 @@
 'use client';
 
-import { useState } from 'react';
-import { ArrowRight, Search, Calendar, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Search, Calendar, User, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState('সব');
+  const [posts, setPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('id', { ascending: true }); // Using ID to maintain our original order
+
+      if (data) {
+        setPosts(data);
+      }
+      setIsLoading(false);
+    }
+
+    fetchPosts();
+  }, []);
 
   const categories = [
     { id: 'all', label: 'সব' },
@@ -17,57 +36,8 @@ export default function BlogPage() {
     { id: 'country', label: 'দেশ' },
   ];
 
-  const featuredPosts = [
-    {
-      id: 1,
-      title: "টাইগারদের জন্য একটি অক্রিকেটিয় টোটকা প্রয়াস",
-      category: "ভাবনা",
-      date: "মে ০৬, ২০২৪",
-      image: "/blog_post_1.jpg",
-      excerpt: "মানুষের জীবনটা একটা বইয়ের মতো। প্রতিটা দিন একেকটা পাতা। কোনো পাতা হাসির, কোনো পাতা কান্নার..."
-    },
-    {
-      id: 2,
-      title: "শ্রেষ্টতম সময়ের শুরু",
-      category: "গল্প",
-      date: "মে ০৪, ২০২৪",
-      image: "/blog_post_2.jpg",
-      excerpt: "বর্তমান বিশ্বে প্রযুক্তি ছাড়া ব্যবসার কথা চিন্তা করা অসম্ভব। কিন্তু শুধু প্রযুক্তিই কি যথেষ্ট?..."
-    },
-    {
-      id: 3,
-      title: "শহরের কোনো এক উষ্ণতম দিনে....",
-      category: "ভাবনা",
-      date: "এপ্রিল ২৮, ২০২৪",
-      image: "/blog_post_3.jpg",
-      excerpt: "ঠিক উষ্ণতম বলা যাবে না হয়তো। তবে প্রচন্ড দাবদাহকে উপেক্ষাও করা যাচ্ছে না। স্মৃতিকথন লেখার জন্য..."
-    },
-    {
-      id: 4,
-      title: "অনুভবে অন্তরীক্ষ",
-      category: "গল্প",
-      date: "এপ্রিল ২৫, ২০২৪",
-      image: "/blog_post_4.jpg",
-      excerpt: "নেতৃত্ব মানে আদেশ দেওয়া নয়, নেতৃত্ব মানে পথ দেখানো। ১৮ বছরের অভিজ্ঞতা থেকে যা শিখলাম..."
-    },
-    {
-      id: 5,
-      title: "বৃষ্টিস্নাত দুপুর অথবা জোছনার সমুদ্র বিলাশ কিংবা শুধুই অনুভূতিনামা",
-      category: "দেশ",
-      date: "এপ্রিল ২০, ২০২৪",
-      image: "/blog_post_5.jpg",
-      excerpt: "শহরের যান্ত্রিকতা ছেড়ে যখনই গ্রামে যাই, এক অদ্ভুত প্রশান্তি অনুভব করি..."
-    }
-  ];
-
-  const archivePosts = [
-    { id: 6, title: "ত্রিশের আনাগোনা (যাপিত জীবন)", date: "এপ্রিল ১৫, ২০২৪" },
-    { id: 7, title: "যাপিত জীবন (৩)", date: "এপ্রিল ১০, ২০২৪" },
-    { id: 8, title: "যাপিত জীবন অথবা নিছক ছবি ব্লগ", date: "এপ্রিল ০৫, ২০২৪" },
-    { id: 9, title: "গভীরতা, কখনও কখনও হারিয়ে যায়, অন্য কোনো গভীরতায়", date: "মার্চ ২৮, ২০২৪" },
-    { id: 10, title: "শিল্পান্তর (গল্প)", date: "মার্চ ২৫, ২০২৪" },
-    { id: 11, title: "শূণ্য পূর্ণ অনুভূতি", date: "মার্চ ২০, ২০২৪" },
-  ];
+  const featuredPosts = posts.slice(0, 5);
+  const archivePosts = posts.slice(5);
 
   return (
     <div className="container animate-fade-in">
@@ -106,25 +76,31 @@ export default function BlogPage() {
           <h2 className="section-label">Featured Stories</h2>
         </div>
         
-        <div className="featured-slider-track">
-          {featuredPosts.map((post) => (
-            <div key={post.id} className="featured-slider-item">
-              <div className="slider-card-image-bg">
-                 <div className="slider-overlay">
-                    <div className="category-badge-pill bengali">{post.category}</div>
-                    <div className="slider-content">
-                       <span className="slider-date"><Calendar size={14} /> {post.date}</span>
-                       <h3 className="slider-title bengali">{post.title}</h3>
-                       <p className="slider-excerpt bengali">{post.excerpt}</p>
-                       <Link href="/blog/demo-post" className="read-link-overlay">
-                         Read Story <ArrowRight size={16} />
-                       </Link>
-                    </div>
-                 </div>
+        {isLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
+            <Loader2 className="animate-spin" size={40} color="var(--accent-green)" />
+          </div>
+        ) : (
+          <div className="featured-slider-track">
+            {featuredPosts.map((post) => (
+              <div key={post.id} className="featured-slider-item">
+                <div className="slider-card-image-bg" style={{ backgroundImage: `url(${post.image_url || '/blog_post_1.jpg'})` }}>
+                   <div className="slider-overlay">
+                      <div className="category-badge-pill bengali">{post.category}</div>
+                      <div className="slider-content">
+                         <span className="slider-date"><Calendar size={14} /> {post.publish_date}</span>
+                         <h3 className="slider-title bengali">{post.title}</h3>
+                         <p className="slider-excerpt bengali">{post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে। সর্বোচ্চ তিন লাইনে এটি সীমাবদ্ধ থাকবে।'}</p>
+                         <Link href={`/blog/${post.slug}`} className="read-link-overlay">
+                           Read Story <ArrowRight size={16} />
+                         </Link>
+                      </div>
+                   </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Archive Grid */}
@@ -140,12 +116,12 @@ export default function BlogPage() {
                 {/* Image placeholder */}
               </div>
               <div className="archive-info">
-                <span className="post-date">{post.date}</span>
+                <span className="post-date">{post.publish_date}</span>
                 <h3 className="archive-title bengali">{post.title}</h3>
                 <p className="archive-text bengali">
-                  এইখানে ব্লগের সারাংশ থাকবে। সর্বোচ্চ তিন লাইনে এটি সীমাবদ্ধ থাকবে যাতে গ্রিড লেআউট সুন্দর দেখায় এবং পড়ার আগ্রহ তৈরি করে...
+                  {post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে। সর্বোচ্চ তিন লাইনে এটি সীমাবদ্ধ থাকবে যাতে গ্রিড লেআউট সুন্দর দেখায় এবং পড়ার আগ্রহ তৈরি করে...'}
                 </p>
-                <Link href="/blog/demo-post" className="read-link">
+                <Link href={`/blog/${post.slug}`} className="read-link">
                   Read Story <ArrowRight size={16} />
                 </Link>
               </div>

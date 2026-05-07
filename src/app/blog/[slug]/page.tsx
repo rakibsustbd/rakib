@@ -1,29 +1,36 @@
 'use client';
 
-import { ArrowLeft, Send, MessageCircle, Heart, Share2, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, Heart, Share2, Calendar, User, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 export default function BlogPostPage() {
+  const params = useParams();
   const [comment, setComment] = useState('');
+  const [post, setPost] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const post = {
-    title: "শহরের কোনো এক উষ্ণতম দিনে....",
-    category: "ভাবনা",
-    date: "এপ্রিল ২৮, ২০২৪",
-    author: "Ahmed Rakib",
-    readTime: "৩ মিনিট",
-    content: `
-      ঠিক উষ্ণতম বলা যাবে না হয়তো। তবে প্রচন্ড দাবদাহকে উপেক্ষাও করা যাচ্ছে না। স্মৃতিকথন লেখার জন্য একেবারেই উপযুক্ত আবহাওয়া নয়। এডিসন ভাইয়ের আবিষ্কারের সরকারী ডিজিটাইজড ব্যবস্থাপনায় আশা যাওয়ায় লেখালেখি দূরে থাক, একটু প্রশান্তিতে ঘুমিয়ে থাকাটাই দায়। 
+  useEffect(() => {
+    async function fetchPost() {
+      if (!params?.slug) return;
       
-      কি অদ্ভুত, সময় গড়ে দেয় ব্যবধান। একটা সময় এই রকম আবহাওয়ায় খেলার মাঠে কত সময় কাটিয়েছি। আর আজ চার দেয়ালের মাঝে ফ্যানের নিচে বসেও অস্থির লাগছে। বয়স নাকি পরিস্থিতি, কোনটা এর জন্য দায়ী তা বলা মুশকিল।
-      
-      এই গরমের মাঝেই মনে পড়ে গেল কিছু পুরোনো স্মৃতি। বন্ধুরা মিলে পুকুরে ঝাঁপিয়ে পড়ার সেই দুপুরগুলো। এখন আর সেই দিন নেই, সেই বন্ধুরাও নেই কাছাকাছি। সবাই যার যার জীবনে ব্যস্ত। 
-      
-      তবে এই উষ্ণতম দিনেও একটা শান্তি আছে। যখন হঠাৎ করে এক পশলা বৃষ্টি এসে সব কিছু ঠান্ডা করে দেয়। মাটির সোঁদা গন্ধ আর বৃষ্টির শব্দ সব ক্লান্তি ধুয়ে মুছে নিয়ে যায়। হয়তো আজ বিকেলেও এমন একটা বৃষ্টির অপেক্ষায় আছি।
-    `
-  };
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('slug', params.slug)
+        .single();
+
+      if (data) {
+        setPost(data);
+      }
+      setIsLoading(false);
+    }
+
+    fetchPost();
+  }, [params?.slug]);
 
   const initialComments = [
     { id: 1, user: "তানভীর আহমেদ", text: "খুব সুন্দর লিখেছেন রাকিব ভাই। অনুপ্রেরণা পেলাম!", date: "২ ঘণ্টা আগে" },
@@ -36,26 +43,31 @@ export default function BlogPostPage() {
         <ArrowLeft size={18} /> Back to Stories
       </Link>
 
-      <article className="post-container">
-        <header className="post-header">
-          <div className="post-category-tag bengali">{post.category}</div>
-          <h1 className="post-full-title bengali">{post.title}</h1>
-          <div className="post-meta-full">
-            <span className="meta-item"><User size={16} /> {post.author}</span>
-            <span className="meta-item"><Calendar size={16} /> {post.date}</span>
-            <span className="meta-item">⏱️ {post.readTime} পড়া</span>
-          </div>
-        </header>
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+          <Loader2 className="animate-spin" size={40} color="var(--accent-green)" />
+        </div>
+      ) : post ? (
+        <article className="post-container">
+          <header className="post-header">
+            <div className="post-category-tag bengali">{post.category}</div>
+            <h1 className="post-full-title bengali">{post.title}</h1>
+            <div className="post-meta-full">
+              <span className="meta-item"><User size={16} /> {post.author}</span>
+              <span className="meta-item"><Calendar size={16} /> {post.publish_date}</span>
+              <span className="meta-item">⏱️ {post.read_time} পড়া</span>
+            </div>
+          </header>
 
-        <div className="post-featured-image glass-card">
+        <div className="post-featured-image glass-card" style={post.image_url ? { backgroundImage: `url(${post.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
            {/* Image placeholder */}
            <div className="image-overlay-subtle"></div>
         </div>
 
         <div className="post-content bengali">
-          {post.content.split('\n').map((para, i) => (
+          {post.content ? post.content.split('\n').map((para: string, i: number) => (
             <p key={i}>{para}</p>
-          ))}
+          )) : <p>এই পোস্টের বিস্তারিত লেখা এখনো যোগ করা হয়নি।</p>}
         </div>
 
         <footer className="post-footer">
@@ -97,6 +109,11 @@ export default function BlogPostPage() {
           </div>
         </section>
       </article>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '100px 0' }}>
+          <h2>Post not found</h2>
+        </div>
+      )}
 
       <style jsx>{`
         .back-link {
