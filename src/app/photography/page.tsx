@@ -29,18 +29,24 @@ export default function PhotographyPage() {
   const indexOfFirstPhoto = indexOfLastPhoto - PHOTOS_PER_PAGE;
   const currentPhotos = photos.slice(indexOfFirstPhoto, indexOfLastPhoto);
 
-  // For the banner, pick 6 recent photos
-  const bannerPhotos = photos.slice(0, 6);
+  // For the banner, pick 12 recent photos for a denser grid
+  const bannerPhotos = photos.slice(0, 12);
+
+  // For the Photo Story slider, pick another set of photos
+  const storyPhotos = photos.slice(6, 16);
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 400, behavior: 'smooth' });
+    const element = document.getElementById('archive-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
     <div className="container animate-fade-in">
       
-      {/* Photo Hero Banner (Similar to Blog Statement Banner but with photos) */}
+      {/* Photo Hero Banner */}
       <div className="photography-hero-banner glass-card">
         <div className="banner-grid">
            {bannerPhotos.map((p) => (
@@ -48,11 +54,6 @@ export default function PhotographyPage() {
                <img src={p.local_path || p.image_url} alt={p.title} />
              </div>
            ))}
-           {bannerPhotos.length === 0 && (
-             <div className="banner-placeholder">
-               <Camera size={48} color="rgba(255,255,255,0.1)" />
-             </div>
-           )}
         </div>
         <div className="banner-overlay">
           <div className="banner-content">
@@ -62,8 +63,37 @@ export default function PhotographyPage() {
         </div>
       </div>
 
-      {/* Archive Grid - Matching Blog Style */}
-      <div className="photography-archive-section">
+      {/* Photo Stories Section (Pinterest Style Slider) */}
+      <div className="stories-section">
+        <div className="section-header">
+          <h2 className="section-label">Photo Stories</h2>
+          <span className="scroll-hint">Scroll to explore →</span>
+        </div>
+        
+        <div className="stories-slider">
+          <div className="stories-track">
+            {storyPhotos.map((photo, index) => (
+              <div 
+                key={photo.id} 
+                className={`story-card ${index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'wide' : 'small'}`}
+              >
+                <Link href={`/photography/${photo.id}`}>
+                  <div className="story-img-container">
+                    <img src={photo.local_path || photo.image_url} alt={photo.title} />
+                    <div className="story-hover-info">
+                      <span className="story-cat">Visual Essay</span>
+                      <h4 className="story-title-mini">{photo.title}</h4>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Archive Grid */}
+      <div id="archive-section" className="photography-archive-section">
         <div className="section-header">
           <h2 className="section-label">Archive</h2>
           <span className="photo-count-badge">{photos.length} Photos</span>
@@ -95,10 +125,7 @@ export default function PhotographyPage() {
                       </div>
                     </div>
                   </Link>
-                  <div className="photo-info">
-                    <span className="photo-date">{new Date(photo.publish_date).toLocaleDateString()}</span>
-                    <h3 className="photo-title bengali">{photo.title}</h3>
-                  </div>
+                  {/* Title hidden as requested to keep the archive clean */}
                 </div>
               ))}
             </div>
@@ -151,10 +178,108 @@ export default function PhotographyPage() {
 
         .banner-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(3, 1fr);
           height: 100%;
-          opacity: 0.4;
+          opacity: 0.35;
+        }
+
+        .stories-section {
+          margin-bottom: 80px;
+        }
+
+        .scroll-hint {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+
+        .stories-slider {
+          width: 100vw;
+          margin-left: calc(-50vw + 50%);
+          overflow-x: auto;
+          padding: 20px 40px 40px;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .stories-slider::-webkit-scrollbar {
+          display: none;
+        }
+
+        .stories-track {
+          display: flex;
+          gap: 24px;
+          width: max-content;
+        }
+
+        .story-card {
+          border-radius: 28px;
+          overflow: hidden;
+          position: relative;
+          background: #111;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .story-card.tall { width: 320px; height: 480px; }
+        .story-card.wide { width: 440px; height: 350px; margin-top: 65px; }
+        .story-card.small { width: 280px; height: 380px; margin-top: 30px; }
+
+        .story-card:hover {
+          transform: translateY(-10px) scale(1.02);
+          border-color: var(--accent-green);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+          z-index: 10;
+        }
+
+        .story-img-container {
+          width: 100%;
+          height: 100%;
+          position: relative;
+        }
+
+        .story-img-container img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.8s ease;
+        }
+
+        .story-card:hover img {
+          transform: scale(1.1);
+        }
+
+        .story-hover-info {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 30px;
+          opacity: 0;
+          transition: opacity 0.4s ease;
+        }
+
+        .story-card:hover .story-hover-info {
+          opacity: 1;
+        }
+
+        .story-cat {
+          color: var(--accent-green);
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          font-weight: 700;
+          margin-bottom: 8px;
+        }
+
+        .story-title-mini {
+          color: #fff;
+          font-size: 1.2rem;
+          margin: 0;
         }
 
         .banner-item {
