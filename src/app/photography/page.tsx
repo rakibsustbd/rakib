@@ -122,9 +122,15 @@ export default function PhotographyPage() {
                         backgroundImage: `url('${photo.local_path || photo.image_url}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
-                        backgroundColor: '#050505' // Fallback base
+                        backgroundColor: '#064e3b', // Fallback base
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}
                     >
+                      {!photo.image_url && (
+                        <div className="signature-watermark" style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.1)' }}>RAKIB.</div>
+                      )}
                       <div className="photo-overlay-simple">
                          <div className="photo-stats-mini">
                             <span><Heart size={14} /> {photo.likes || 0}</span>
@@ -190,6 +196,22 @@ export default function PhotographyPage() {
           grid-template-rows: repeat(3, 1fr);
           height: 100%;
           opacity: 0.35;
+          gap: 12px;
+          padding: 12px;
+        }
+
+        .banner-item {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          border-radius: 8px;
+          border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .banner-item img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .stories-section {
@@ -232,12 +254,12 @@ export default function PhotographyPage() {
           border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .story-card.tall { width: 320px; height: 480px; }
-        .story-card.wide { width: 440px; height: 350px; margin-top: 65px; }
-        .story-card.small { width: 280px; height: 380px; margin-top: 30px; }
+        .story-card.tall { width: 320px; height: 480px; transform: translateY(0px); }
+        .story-card.wide { width: 440px; height: 350px; transform: translateY(80px); }
+        .story-card.small { width: 280px; height: 380px; transform: translateY(40px); }
 
         .story-card:hover {
-          transform: translateY(-10px) scale(1.02);
+          transform: translateY(-10px) scale(1.02) !important;
           border-color: var(--accent-green);
           box-shadow: 0 20px 40px rgba(0,0,0,0.4);
           z-index: 10;

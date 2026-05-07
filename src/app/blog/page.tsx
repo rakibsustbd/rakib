@@ -18,7 +18,7 @@ export default function BlogPage() {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .neq('title', 'আড্ডা পুষ্ট --কেডা কেডা আছেন? ব্যস্ততার কারনে মেলাদিন পর ব্লগে আসছেন? (সাময়িক)') // Filtering out the unwanted post
+        .not('title', 'ilike', '%আড্ডা পুষ্ট%') // Using a fuzzy filter to ensure it's removed
         .order('id', { ascending: true });
 
       if (data) {
@@ -108,12 +108,19 @@ export default function BlogPage() {
                 <div 
                   className="slider-card-image-bg" 
                   style={{ 
-                    backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #050505 0%, #064e3b 100%)', // Signature Green Fallback
+                    backgroundImage: post.image_url ? `url('${post.image_url}')` : 'none',
+                    backgroundColor: '#064e3b',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    border: !post.image_url ? '1px solid var(--accent-green)' : 'none'
+                    border: !post.image_url ? '1px solid var(--accent-green)' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
                 >
+                  {!post.image_url && (
+                    <div className="signature-watermark">RAKIB.</div>
+                  )}
                    <div className="slider-overlay">
                       <div className="category-badge-pill bengali">{post.category}</div>
                       <div className="slider-content">
@@ -144,12 +151,19 @@ export default function BlogPage() {
                <div 
                 className="archive-img-wrap glass-card"
                 style={{ 
-                  backgroundImage: post.image_url ? `url('${post.image_url}')` : 'linear-gradient(135deg, #050505 0%, #064e3b 100%)', // Signature Green Fallback
+                  backgroundImage: post.image_url ? `url('${post.image_url}')` : 'none',
+                  backgroundColor: '#064e3b',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  border: !post.image_url ? '1px solid var(--accent-green)' : 'none'
+                  border: !post.image_url ? '1px solid var(--accent-green)' : 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
+                {!post.image_url && (
+                  <div className="signature-watermark" style={{ fontSize: '1.2rem' }}>RAKIB.</div>
+                )}
               </div>
               <div className="archive-info">
                 <span className="post-date">{post.publish_date}</span>
@@ -558,6 +572,24 @@ export default function BlogPage() {
           .blog-search {
             width: 100%;
           }
+        }
+
+        @media (max-width: 640px) {
+          .banner-title {
+            font-size: 2.5rem;
+          }
+          .blog-search {
+            width: 100%;
+          }
+        }
+
+        .signature-watermark {
+          font-family: var(--font-outfit);
+          font-weight: 900;
+          font-size: 2rem;
+          color: rgba(16, 185, 129, 0.2);
+          letter-spacing: 0.1em;
+          user-select: none;
         }
       `}</style>
     </div>
