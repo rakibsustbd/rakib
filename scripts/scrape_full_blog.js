@@ -96,7 +96,7 @@ async function scrapeAndMigrate() {
       console.log(`Scraping post: ${post.title}`);
       const { data } = await axios.get(link);
       const $ = cheerio.load(data);
-      const contentEl = $('.post-content');
+      const contentEl = $('.blog-content');
       
       // Clean up some unwanted elements like social share buttons
       contentEl.find('.social-share, .fb-like, script, iframe').remove();

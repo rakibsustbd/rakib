@@ -26,6 +26,7 @@ export default function BlogPostPage() {
         .single();
 
       if (data) {
+        console.log("Fetched post from DB:", data);
         setPost(data);
       }
       setIsLoading(false);
