@@ -62,34 +62,58 @@ export default function PhotoStoryDetailPage() {
         <ArrowLeft size={20} /> Back to Archive
       </Link>
 
-      <header className="story-header">
-        <div className="story-meta">
+      <header className="story-header animate-fade-in">
+        <Link href="/photography" className="back-link">
+          <ArrowLeft size={18} /> Back to Archive
+        </Link>
+        <div className="story-meta-top">
           <span className="story-cat-badge">{story.category || 'Visual Story'}</span>
           <span className="story-date"><Calendar size={14} /> {story.date || 'Recent'}</span>
         </div>
-        <h1 className="story-main-title">{story.title}</h1>
-        <p className="story-lead">{story.description}</p>
-        
-        <div className="story-actions">
-           <button className="action-btn"><Heart size={18} /> Like Story</button>
-           <button className="action-btn"><Share2 size={18} /> Share</button>
-        </div>
       </header>
 
-      <div className="story-masonry-grid">
-        {photos.map((photo, index) => (
-          <div key={photo.id} className={`masonry-item ${index % 3 === 0 ? 'large' : 'medium'}`}>
-            <img src={photo.image_url} alt={photo.title} />
-            <div className="img-caption">{photo.title}</div>
-          </div>
-        ))}
+      {/* Cinematic Hero Frame (3x3 Grid with Title in Center) */}
+      <div className="story-hero-frame">
+        <div className="frame-item p1"><img src={photos[0]?.image_url} alt="" /></div>
+        <div className="frame-item p2"><img src={photos[1]?.image_url} alt="" /></div>
+        <div className="frame-item p3"><img src={photos[2]?.image_url} alt="" /></div>
+        
+        <div className="frame-item p4"><img src={photos[3]?.image_url} alt="" /></div>
+        <div className="frame-center-title">
+           <div className="story-badge">PHOTO STORY</div>
+           <h1 className="story-main-title">{story.title}</h1>
+           <p className="story-location">{story.location}</p>
+        </div>
+        <div className="frame-item p5"><img src={photos[4]?.image_url} alt="" /></div>
+        
+        <div className="frame-item p6"><img src={photos[5]?.image_url} alt="" /></div>
+        <div className="frame-item p7"><img src={photos[6]?.image_url} alt="" /></div>
+        <div className="frame-item p8"><img src={photos[7]?.image_url} alt="" /></div>
       </div>
+
+      <div className="story-narrative-container">
+        <p className="story-lead-long">{story.description}</p>
+      </div>
+
+      {/* Continuous Archive for Remaining Photos */}
+      {photos.length > 8 && (
+        <div className="story-remaining-archive">
+          <h3 className="archive-label">Extended Collection</h3>
+          <div className="remaining-grid">
+            {photos.slice(8).map((photo) => (
+              <div key={photo.id} className="remaining-item">
+                <img src={photo.image_url} alt={photo.title} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .story-detail-container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
-          padding: 40px 20px 100px;
+          padding: 40px 40px 100px;
         }
 
         .back-link {
@@ -98,35 +122,31 @@ export default function PhotoStoryDetailPage() {
           gap: 8px;
           color: var(--text-muted);
           text-decoration: none;
-          margin-bottom: 60px;
           font-weight: 500;
           transition: color 0.3s ease;
+          margin-bottom: 20px;
         }
 
         .back-link:hover {
           color: var(--accent-green);
         }
 
-        .story-header {
-          max-width: 800px;
-          margin-bottom: 80px;
-        }
-
-        .story-meta {
+        .story-meta-top {
           display: flex;
           gap: 20px;
           align-items: center;
-          margin-bottom: 24px;
+          margin-bottom: 40px;
         }
 
         .story-cat-badge {
-          background: var(--accent-green);
-          color: #000;
-          padding: 4px 12px;
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--accent-green);
+          padding: 6px 16px;
           border-radius: 100px;
           font-size: 0.75rem;
           font-weight: 700;
           text-transform: uppercase;
+          border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .story-date {
@@ -137,88 +157,121 @@ export default function PhotoStoryDetailPage() {
           gap: 6px;
         }
 
-        .story-main-title {
-          font-size: 4rem;
-          font-weight: 800;
-          line-height: 1.1;
-          margin-bottom: 24px;
-          letter-spacing: -0.04em;
+        /* Cinematic Hero Frame */
+        .story-hero-frame {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+          margin-bottom: 80px;
         }
 
-        .story-lead {
-          font-size: 1.25rem;
-          color: var(--text-secondary);
-          line-height: 1.6;
-          margin-bottom: 40px;
-        }
-
-        .story-actions {
-          display: flex;
-          gap: 16px;
-        }
-
-        .action-btn {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #fff;
-          padding: 10px 20px;
+        .frame-item {
+          width: 100%;
           border-radius: 12px;
+          overflow: hidden;
+          background: #050505;
           display: flex;
           align-items: center;
-          gap: 10px;
-          cursor: pointer;
-          transition: all 0.3s ease;
+          justify-content: center;
         }
 
-        .action-btn:hover {
-          background: rgba(255,255,255,0.1);
-          border-color: var(--accent-green);
+        .frame-item img {
+          width: 100%;
+          height: auto;
+          display: block;
+          transition: transform 0.6s ease;
         }
 
-        .story-masonry-grid {
+        .frame-center-title {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 40px;
+          background: rgba(255,255,255,0.02);
+          border-radius: 24px;
+          border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .story-badge {
+          font-size: 0.7rem;
+          font-weight: 900;
+          letter-spacing: 0.3em;
+          color: var(--text-muted);
+          margin-bottom: 16px;
+        }
+
+        .story-main-title {
+          font-size: 2.8rem;
+          font-weight: 800;
+          line-height: 1.1;
+          margin-bottom: 12px;
+          color: #fff;
+        }
+
+        .story-location {
+          color: var(--accent-green);
+          font-size: 0.9rem;
+          font-weight: 600;
+        }
+
+        .story-narrative-container {
+          max-width: 800px;
+          margin: 0 auto 100px;
+          text-align: center;
+        }
+
+        .story-lead-long {
+          font-size: 1.4rem;
+          line-height: 1.7;
+          color: var(--text-secondary);
+          font-style: italic;
+        }
+
+        /* Remaining Archive */
+        .story-remaining-archive {
+          border-top: 1px solid var(--border-color);
+          padding-top: 60px;
+        }
+
+        .archive-label {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: 40px;
+          color: var(--text-primary);
+        }
+
+        .remaining-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 32px;
         }
 
-        .masonry-item {
-          position: relative;
-          border-radius: 24px;
+        .remaining-item {
+          border-radius: 16px;
           overflow: hidden;
-          background: #111;
+          background: #050505;
         }
 
-        .masonry-item.large {
-          grid-row: span 2;
-        }
-
-        .masonry-item img {
+        .remaining-item img {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.8s ease;
+          height: auto;
+          display: block;
         }
 
-        .masonry-item:hover img {
-          transform: scale(1.05);
+        @media (max-width: 1024px) {
+          .story-hero-frame { grid-template-columns: 1fr 1fr; }
+          .frame-center-title { grid-column: span 2; order: -1; margin-bottom: 24px; }
+          .remaining-grid { grid-template-columns: 1fr 1fr; }
         }
 
-        .img-caption {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 30px;
-          background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-          color: #fff;
-          font-size: 0.9rem;
-          opacity: 0;
-          transition: opacity 0.4s ease;
+        @media (max-width: 640px) {
+          .story-hero-frame, .remaining-grid { grid-template-columns: 1fr; }
+          .frame-center-title { grid-column: span 1; }
+          .story-main-title { font-size: 2rem; }
         }
-
-        .masonry-item:hover .img-caption {
-          opacity: 1;
-        }
+      `}</style>
 
         .loading {
           height: 60vh;
