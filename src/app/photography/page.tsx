@@ -37,8 +37,8 @@ export default function PhotographyPage() {
   const indexOfFirstPhoto = indexOfLastPhoto - PHOTOS_PER_PAGE;
   const currentPhotos = photos.slice(indexOfFirstPhoto, indexOfLastPhoto);
 
-  // For the banner, pick 12 recent photos for a denser grid
-  const bannerPhotos = photos.slice(0, 12);
+  // For the banner, pick 8 recent photos for a 2-column grid
+  const bannerPhotos = photos.slice(0, 8);
 
   // For the Photo Story slider, we'll simulate stories by picking specific images
   // In a real scenario, this would be a separate 'stories' table in Supabase
@@ -227,8 +227,8 @@ export default function PhotographyPage() {
 
         .banner-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          grid-template-rows: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+          grid-template-rows: repeat(4, 1fr);
           height: 100%;
           opacity: 0.35;
           gap: 12px;

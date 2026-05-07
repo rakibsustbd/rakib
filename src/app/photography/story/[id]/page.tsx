@@ -58,9 +58,6 @@ export default function PhotoStoryDetailPage() {
 
   return (
     <div className="story-detail-container animate-fade-in">
-      <Link href="/photography" className="back-link">
-        <ArrowLeft size={20} /> Back to Archive
-      </Link>
 
       <header className="story-header animate-fade-in">
         <Link href="/photography" className="back-link">
