@@ -19,7 +19,7 @@ export default function BlogPage() {
         .from('posts')
         .select('*')
         .not('title', 'ilike', '%আড্ডা পুষ্ট%') // Using a fuzzy filter to ensure it's removed
-        .order('id', { ascending: true });
+        .order('publish_date', { ascending: false });
 
       if (data) {
         setPosts(data);
@@ -54,7 +54,12 @@ export default function BlogPage() {
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 800, behavior: 'smooth' });
+    setTimeout(() => {
+      const element = document.getElementById('blog-archive-start');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   return (
@@ -140,7 +145,7 @@ export default function BlogPage() {
       </div>
 
       {/* Archive Grid */}
-      <div className="blog-archive-section">
+      <div id="blog-archive-start" className="blog-archive-section">
         <div className="section-header">
           <h2 className="section-label">Archive</h2>
         </div>
