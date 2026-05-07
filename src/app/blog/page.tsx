@@ -18,12 +18,13 @@ export default function BlogPage() {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .not('title', 'ilike', '%আড্ডা পুষ্ট%') // Using a fuzzy filter to ensure it's removed
-        .order('publish_date', { ascending: false });
+        .not('title', 'ilike', '%আড্ডা পুষ্ট%')
+        .order('publish_date', { ascending: false, nullsFirst: false } as any);
 
       if (data) {
         setPosts(data);
       }
+
       setIsLoading(false);
     }
 
@@ -129,9 +130,10 @@ export default function BlogPage() {
                    <div className="slider-overlay">
                       <div className="category-badge-pill bengali">{post.category}</div>
                       <div className="slider-content">
-                         <span className="slider-date"><Calendar size={14} /> {post.publish_date}</span>
-                         <h3 className="slider-title bengali">{post.title}</h3>
-                         <p className="slider-excerpt bengali">{post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে। সর্বোচ্চ তিন লাইনে এটি সীমাবদ্ধ থাকবে।'}</p>
+                          <span className="slider-date"><Calendar size={14} /> {post.publish_date || 'সাম্প্রতিক'}</span>
+                          <h3 className="slider-title bengali">{post.title}</h3>
+                          <p className="slider-excerpt bengali">{post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে।'}</p>
+
                          <Link href={`/blog/${post.slug}`} className="read-link-overlay">
                            Read Story <ArrowRight size={16} />
                          </Link>
@@ -171,7 +173,8 @@ export default function BlogPage() {
                 )}
               </div>
               <div className="archive-info">
-                <span className="post-date">{post.publish_date}</span>
+                <span className="post-date">{post.publish_date || 'সাম্প্রতিক'}</span>
+
                 <h3 className="archive-title bengali">{post.title}</h3>
                 <p className="archive-text bengali">
                   {post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে। সর্বোচ্চ তিন লাইনে এটি সীমাবদ্ধ থাকবে যাতে গ্রিড লেআউট সুন্দর দেখায় এবং পড়ার আগ্রহ তৈরি করে...'}
