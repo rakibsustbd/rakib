@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Loader2, Calendar, Camera, Heart, MessageSquare } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2, Calendar, Camera, Heart, MessageSquare, BookOpen, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
@@ -9,590 +9,296 @@ const PHOTOS_PER_PAGE = 15;
 
 export default function PhotographyPage() {
   const [photos, setPhotos] = useState<any[]>([]);
+  const [stories, setStories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeStory, setActiveStory] = useState(0);
+  const [activeStoryIdx, setActiveStoryIdx] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveStory((prev) => (prev + 1) % 5);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const { data: sortData } = await supabase
+          .from('skills')
+          .select('evidence')
+          .eq('category', 'global_config')
+          .eq('name', 'sort_order')
+          .maybeSingle();
+        
+        const currentSortOrder = sortData?.evidence || 'desc';
 
-  useEffect(() => {
-    async function fetchPhotos() {
-      const { data } = await supabase
-        .from('photos')
-        .select('*')
-        .order('publish_date', { ascending: false });
-      if (data) setPhotos(data);
+        const [photosRes, storiesRes] = await Promise.all([
+          supabase.from('photos').select('*').order('publish_date', { ascending: currentSortOrder === 'asc' }),
+          supabase.from('skills').select('*').eq('category', 'photo_story').order('order_index', { ascending: true })
+        ]);
+
+        if (photosRes.data) setPhotos(photosRes.data);
+        if (storiesRes.data) {
+          const parsedStories = storiesRes.data.map(s => {
+            const parsed = JSON.parse(s.evidence);
+            const storyPhotos = (parsed.photo_ids || [])
+              .map((id: any) => photosRes.data?.find(p => String(p.id) === String(id)))
+              .filter((p: any) => p !== undefined);
+            
+            return {
+              id: s.id,
+              title: s.name,
+              category: parsed.category || 'General',
+              description: parsed.description || '',
+              photos: storyPhotos
+            };
+          }).filter(s => s.photos.length > 0);
+          setStories(parsedStories);
+        }
+      } catch (e) {
+        console.error("Error fetching photography data:", e);
+      }
       setIsLoading(false);
     }
-    fetchPhotos();
+    fetchData();
   }, []);
 
+  useEffect(() => {
+    if (stories.length > 0) {
+      const timer = setInterval(() => {
+        setActiveStoryIdx((prev) => (prev + 1) % stories.length);
+      }, 7000);
+      return () => clearInterval(timer);
+    }
+  }, [stories.length]);
+
   const totalPages = Math.ceil(photos.length / PHOTOS_PER_PAGE);
-  const indexOfLastPhoto = currentPage * PHOTOS_PER_PAGE;
-  const indexOfFirstPhoto = indexOfLastPhoto - PHOTOS_PER_PAGE;
-  const currentPhotos = photos.slice(indexOfFirstPhoto, indexOfLastPhoto);
-
-  // For the banner, pick 8 recent photos for a 2-column grid
-  const bannerPhotos = photos.slice(0, 8);
-
-  // For the Photo Story slider, we'll simulate stories by picking specific images
-  // In a real scenario, this would be a separate 'stories' table in Supabase
-  const storyCollections = [
-    { id: 'himalayan-dawn', title: 'Himalayan Dawn', category: 'Landscape', image: photos[6]?.image_url },
-    { id: 'urban-solitude', title: 'Urban Solitude', category: 'Street', image: photos[7]?.image_url },
-    { id: 'village-rhythm', title: 'Village Rhythm', category: 'Life', image: photos[8]?.image_url },
-    { id: 'mist-over-padma', title: 'Mist Over Padma', category: 'Nature', image: photos[9]?.image_url },
-    { id: 'dhaka-lights', title: 'Dhaka Lights', category: 'Urban', image: photos[10]?.image_url },
-  ];
+  const currentPhotos = photos.slice((currentPage - 1) * PHOTOS_PER_PAGE, currentPage * PHOTOS_PER_PAGE);
+  const bannerPhotos = photos.slice(0, 6); // Using 6 for the spaced layout
+  const activeStory = stories[activeStoryIdx];
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    // Use a small delay to ensure rendering completes before scrolling
     setTimeout(() => {
       const element = document.getElementById('archive-grid-start');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        window.scrollTo({ top: 400, behavior: 'smooth' });
-      }
+      if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
 
   return (
     <div className="container animate-fade-in">
       
-      {/* Photo Hero Banner */}
+      {/* Photo Hero Banner (Updated Grid Layout) */}
       <div className="photography-hero-banner glass-card">
-        <div className="banner-grid">
-           {bannerPhotos.map((p) => (
-             <div key={p.id} className="banner-item">
-               <img src={p.local_path || p.image_url} alt={p.title} />
-             </div>
-           ))}
+        <div className="banner-grid-outer">
+          {bannerPhotos.map((p) => (
+            <div key={p.id} className="banner-tile">
+              <img src={p.image_url} alt={p.title} />
+            </div>
+          ))}
         </div>
         <div className="banner-overlay">
           <div className="banner-content">
              <h1 className="banner-title">Visual Archive</h1>
-             <p className="banner-subtitle">Capturing moments through the lens of time.</p>
+             <p className="banner-subtitle">CAPTURING MOMENTS THROUGH THE LENS OF TIME.</p>
           </div>
         </div>
       </div>
 
-      {/* Photo Stories Section (Split Layout Slider) */}
-      <div className="photography-stories-slider-container">
-        <div className="section-header">
-          <h2 className="section-label">Featured Stories</h2>
-          <div className="slider-dots">
-            {storyCollections.map((_, i) => (
-              <button 
-                key={i} 
-                className={`dot ${activeStory === i ? 'active' : ''}`}
-                onClick={() => setActiveStory(i)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="split-slider">
-          {/* Left Side: Content */}
-          <div className="slider-left animate-slide-in">
-            <div className="story-content-box">
-              <span className="story-cat-tag">{storyCollections[activeStory].category}</span>
-              <h2 className="story-display-title">{storyCollections[activeStory].title}</h2>
-              <p className="story-display-desc">
-                {activeStory === 0 && "A journey through the silent peaks of the Annapurna range as the first light breaks."}
-                {activeStory === 1 && "Finding peace in the chaotic heart of Dhaka through minimalist street perspectives."}
-                {activeStory === 2 && "The simple, unhurried life along the banks of the Shitalakshya river."}
-                {activeStory === 3 && "Morning mist drifting over the vast delta as fishermen begin their day."}
-                {activeStory === 4 && "The vibrant neon pulse of Dhaka's midnight streets captured in motion."}
-              </p>
-              <Link href={`/photography/story/${storyCollections[activeStory].id}`} className="explore-story-btn">
-                Explore Story <ChevronRight size={18} />
-              </Link>
+      {/* Photo Stories Section (Dynamic Grid Slider) */}
+      {stories.length > 0 && activeStory && (
+        <div className="photography-stories-slider-container">
+          <div className="section-header">
+            <div className="label-flex">
+               <BookOpen size={20} className="accent-text" />
+               <h2 className="section-label">Editorial Stories</h2>
+            </div>
+            <div className="slider-dots">
+              {stories.map((_, i) => (
+                <button key={i} className={`dot ${activeStoryIdx === i ? 'active' : ''}`} onClick={() => setActiveStoryIdx(i)} />
+              ))}
             </div>
           </div>
 
-          {/* Right Side: Photo Cluster */}
-          <div className="slider-right">
-             <div className="photo-cluster">
-                <div className="cluster-item item-1">
-                  <img src={photos[activeStory + 2]?.image_url} alt="Cluster 1" />
-                </div>
-                <div className="cluster-item item-2">
-                  <img src={photos[activeStory + 5]?.image_url} alt="Cluster 2" />
-                </div>
-                <div className="cluster-item item-3">
-                  <img src={photos[activeStory]?.image_url} alt="Cluster 3" />
+          <div className="story-display-wrapper glass-card">
+             <div className="story-content-side">
+                <span className="story-category-tag">{activeStory.category}</span>
+                <h2 className="story-title-main">{activeStory.title}</h2>
+                <p className="story-description-main">{activeStory.description}</p>
+                <Link href={`/photography/story/${activeStory.id}`} className="explore-story-btn">
+                   Explore Story <ArrowRight size={18} />
+                </Link>
+             </div>
+
+             <div className="story-visual-side">
+                <div className="dynamic-photo-stack">
+                   {activeStory.photos.slice(0, 6).map((photo: any, idx: number) => (
+                     <div key={photo.id} className={`stack-item item-${idx}`}>
+                        <img src={photo.image_url} alt="" />
+                     </div>
+                   ))}
                 </div>
              </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Archive Grid */}
+      {/* Photography Archive Section */}
       <div id="archive-grid-start" className="photography-archive-section">
-        <div className="section-header">
-          <h2 className="section-label">Archive</h2>
-          <span className="photo-count-badge">{photos.length} Photos</span>
+        <div className="archive-header">
+          <div>
+            <h2 className="archive-title">Photography Archive</h2>
+            <p className="archive-subtitle">Total {photos.length} captures in the collection.</p>
+          </div>
+          <div className="archive-filters">
+             <button className="filter-chip active">All Captures</button>
+             <button className="filter-chip">Landscape</button>
+             <button className="filter-chip">Street</button>
+          </div>
         </div>
-        
+
         {isLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}>
-            <Loader2 className="animate-spin" size={40} color="var(--accent-green)" />
+          <div className="loading-state">
+            <Loader2 className="animate-spin" size={48} color="#10b981" />
           </div>
         ) : (
-          <>
-            <div className="photo-grid">
-              {currentPhotos.map((photo) => (
-                <div key={photo.id} className="photo-archive-card animate-fade-in">
-                  <Link href={`/photography/${photo.id}`}>
-                    <div 
-                      className="photo-img-wrap glass-card"
-                      style={{ 
-                        backgroundImage: `url('${photo.local_path || photo.image_url}')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundColor: '#064e3b', // Fallback base
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {!photo.image_url && (
-                        <div className="signature-watermark" style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.1)' }}>RAKIB.</div>
-                      )}
-                      <div className="photo-overlay-simple">
-                         <div className="photo-stats-mini">
-                            <span><Heart size={14} /> {photo.likes || 0}</span>
-                            <span><MessageSquare size={14} /> 0</span>
-                         </div>
-                      </div>
+          <div className="photo-grid">
+            {currentPhotos.map((photo) => (
+              <div key={photo.id} className="photo-card-wrapper glass-card">
+                <div className="photo-card-image">
+                  <img src={photo.image_url} alt={photo.title} loading="lazy" />
+                  <div className="photo-card-overlay">
+                    <div className="overlay-top">
+                       <span className="p-category">{photo.category || 'Landscape'}</span>
                     </div>
-                  </Link>
-                  {/* Title hidden as requested to keep the archive clean */}
+                    <div className="overlay-bottom">
+                       <button className="p-action-btn"><Heart size={18} /></button>
+                       <button className="p-action-btn"><MessageSquare size={18} /></button>
+                    </div>
+                  </div>
                 </div>
+                <div className="photo-card-info">
+                  <div className="photo-metadata">
+                    <span><Calendar size={14} /> {new Date(photo.publish_date).toLocaleDateString()}</span>
+                    <span><Camera size={14} /> {photo.flickr_id}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination-container">
+            <button className="page-nav" disabled={currentPage === 1} onClick={() => paginate(currentPage - 1)}>
+              <ChevronLeft size={20} />
+            </button>
+            <div className="page-numbers">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+                <button key={num} className={`page-number ${currentPage === num ? 'active' : ''}`} onClick={() => paginate(num)}>
+                  {num}
+                </button>
               ))}
             </div>
-
-            {/* Pagination Controls - Same as Blog */}
-            {totalPages > 1 && (
-              <div className="pagination">
-                <button 
-                  className={`page-btn prev ${currentPage === 1 ? 'disabled' : ''}`}
-                  onClick={() => currentPage > 1 && paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                
-                {[...Array(totalPages)].map((_, i) => (
-                  <button 
-                    key={i + 1}
-                    className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
-                    onClick={() => paginate(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-
-                <button 
-                  className={`page-btn next ${currentPage === totalPages ? 'disabled' : ''}`}
-                  onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <ChevronRight size={18} />
-                </button>
-              </div>
-            )}
-          </>
+            <button className="page-nav" disabled={currentPage === totalPages} onClick={() => paginate(currentPage + 1)}>
+              <ChevronRight size={20} />
+            </button>
+          </div>
         )}
       </div>
 
       <style jsx>{`
-        .photography-hero-banner {
-          width: 100%;
-          height: 300px;
-          margin-bottom: 60px;
-          position: relative;
-          background: #000;
-          border-radius: 24px;
-          overflow: hidden;
-          border: 1px solid rgba(16, 185, 129, 0.1);
-        }
-
-        .banner-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          grid-template-rows: repeat(2, 1fr);
-          height: 100%;
-          opacity: 0.35;
-          gap: 12px;
-          padding: 12px;
-        }
-
-        .banner-item {
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          border-radius: 8px;
-          border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .banner-item img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .photography-stories-slider-container {
-          margin-bottom: 100px;
-          position: relative;
-        }
-
-        .slider-dots {
-          display: flex;
-          gap: 8px;
-        }
-
-        .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.2);
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .dot.active {
-          background: var(--accent-green);
-          width: 24px;
-          border-radius: 4px;
-        }
-
-        .split-slider {
-          display: grid;
-          grid-template-columns: 1fr 1.2fr;
-          gap: 60px;
-          align-items: center;
-          min-height: 500px;
-        }
-
-        .story-content-box {
-          padding-right: 40px;
-        }
-
-        .story-cat-tag {
-          color: var(--accent-green);
-          font-size: 0.85rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          margin-bottom: 16px;
-          display: block;
-        }
-
-        .story-display-title {
-          font-size: 4.5rem;
-          font-weight: 800;
-          line-height: 1;
-          margin-bottom: 24px;
-          letter-spacing: -0.05em;
-          color: #fff;
-        }
-
-        .story-display-desc {
-          font-size: 1.1rem;
-          color: var(--text-secondary);
-          line-height: 1.6;
-          margin-bottom: 40px;
-          max-width: 450px;
-        }
-
-        .explore-story-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 12px;
-          background: var(--accent-green);
-          color: #000;
-          padding: 14px 32px;
-          border-radius: 100px;
-          font-weight: 700;
-          text-decoration: none;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .explore-story-btn:hover {
-          transform: scale(1.05);
-          box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-        }
-
-        .slider-right {
-          position: relative;
-          height: 550px;
-        }
-
-        .photo-cluster {
-          position: relative;
-          width: 100%;
-          height: 100%;
-        }
-
-        .cluster-item {
-          position: absolute;
-          border-radius: 24px;
-          overflow: hidden;
-          box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        .photography-hero-banner { 
+          height: 380px; 
+          position: relative; 
+          overflow: hidden; 
+          border-radius: 40px; 
+          margin-bottom: 60px; 
           border: 1px solid rgba(255,255,255,0.1);
-          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          padding: 24px;
         }
-
-        .cluster-item img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .item-1 {
-          width: 300px;
-          height: 400px;
-          top: 0;
-          left: 50px;
-          z-index: 2;
-        }
-
-        .item-2 {
-          width: 320px;
-          height: 240px;
-          bottom: 40px;
-          right: 0;
-          z-index: 3;
-        }
-
-        .item-3 {
-          width: 200px;
-          height: 200px;
-          top: 60px;
-          right: 40px;
-          z-index: 1;
-          opacity: 0.6;
-        }
-
-        @media (max-width: 1024px) {
-          .split-slider {
-            grid-template-columns: 1fr;
-            text-align: center;
-          }
-          .story-content-box { padding-right: 0; margin-bottom: 40px; }
-          .story-display-desc { margin: 0 auto 40px; }
-          .slider-right { height: 400px; }
-          .item-1 { width: 200px; height: 280px; left: 0; }
-          .item-2 { width: 220px; height: 160px; }
-          .story-display-title { font-size: 3rem; }
-        }
-
-        .banner-item {
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-
-        .banner-item img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .banner-overlay {
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-        }
-
-        .banner-title {
-          font-size: 3.5rem;
-          font-weight: 800;
-          color: #fff;
-          margin-bottom: 12px;
-          letter-spacing: -0.04em;
-        }
-
-        .banner-subtitle {
-          color: var(--accent-green);
-          font-size: 1rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          font-weight: 500;
-        }
-
-        .photography-archive-section {
-          margin-bottom: 100px;
-        }
-
-        .section-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 32px;
-          border-bottom: 1px solid var(--border-color);
-          padding-bottom: 16px;
-        }
-
-        .photo-count-badge {
-          background: rgba(16, 185, 129, 0.1);
-          color: var(--accent-green);
-          padding: 6px 16px;
-          border-radius: 100px;
-          font-size: 0.85rem;
-          font-weight: 600;
-        }
-
-        .photo-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 32px;
-        }
-
-        .photo-archive-card {
-          background: rgba(255,255,255,0.01);
-          padding: 12px;
-          border-radius: 20px;
-          transition: all 0.4s ease;
-        }
-
-        .photo-archive-card:hover {
-          background: rgba(255,255,255,0.03);
-          transform: translateY(-5px);
-        }
-
-        .photo-img-wrap {
-          width: 100%;
-          height: 220px; /* Fixed height landscape aspect */
-          border-radius: 14px;
-          overflow: hidden;
-          margin-bottom: 16px;
-          position: relative;
-          cursor: pointer;
-        }
-
-        .photo-overlay-simple {
-          position: absolute;
-          inset: 0;
-          background: rgba(0,0,0,0.3);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-          display: flex;
-          align-items: flex-end;
-          padding: 16px;
-        }
-
-        .photo-img-wrap:hover .photo-overlay-simple {
-          opacity: 1;
-        }
-
-        .photo-stats-mini {
-          display: flex;
+        .banner-grid-outer { 
+          display: grid; 
+          grid-template-columns: repeat(3, 1fr); 
+          grid-template-rows: repeat(2, 1fr); 
           gap: 16px;
-          color: #fff;
-          font-size: 0.85rem;
-          font-weight: 600;
+          height: 100%; 
         }
-
-        .photo-stats-mini span {
-          display: flex;
-          align-items: center;
-          gap: 6px;
+        .banner-tile { 
+          border-radius: 20px;
+          overflow: hidden; 
+          opacity: 0.3;
+          transition: all 0.5s;
         }
+        .banner-tile img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-tile:hover { opacity: 0.6; transform: scale(1.02); }
+        .banner-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
+        .banner-title { font-size: 5rem; font-weight: 900; margin-bottom: 20px; letter-spacing: -0.02em; color: #fff; }
+        .banner-subtitle { font-size: 0.85rem; color: var(--accent-green); font-weight: 800; letter-spacing: 0.2em; }
 
-        .photo-info {
-          padding: 0 4px;
-        }
+        .photography-stories-slider-container { margin-bottom: 80px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .label-flex { display: flex; align-items: center; gap: 12px; }
+        .section-label { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 800; color: #fff; }
+        .slider-dots { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; cursor: pointer; transition: all 0.3s; }
+        .dot.active { background: var(--accent-green); width: 24px; border-radius: 5px; }
 
-        .photo-date {
-          font-size: 0.8rem;
-          color: var(--text-muted);
-          display: block;
-          margin-bottom: 6px;
-        }
+        .story-display-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; padding: 50px; border-radius: 40px; min-height: 400px; align-items: center; overflow: hidden; }
+        .story-content-side { max-width: 450px; z-index: 10; }
+        .story-category-tag { color: var(--accent-green); font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; margin-bottom: 20px; display: block; }
+        .story-title-main { font-size: 3rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 800; }
+        .story-description-main { font-size: 1rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 30px; }
+        .explore-story-btn { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); padding: 12px 24px; border-radius: 100px; transition: all 0.3s; background: rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .explore-story-btn:hover { background: var(--accent-green); color: #000; border-color: var(--accent-green); transform: translateX(5px); }
 
-        .photo-title {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: var(--text-primary);
-          line-height: 1.4;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+        .story-visual-side { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .dynamic-photo-stack { position: relative; width: 100%; height: 400px; }
+        .stack-item { position: absolute; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .stack-item img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .item-0 { width: 220px; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; }
+        .item-1 { width: 160px; height: 220px; top: 5%; left: 5%; z-index: 3; opacity: 0.8; }
+        .item-2 { width: 140px; height: 140px; top: 0%; right: 10%; z-index: 2; opacity: 0.6; }
+        .item-3 { width: 200px; height: 160px; bottom: 5%; right: 5%; z-index: 4; }
+        .item-4 { width: 180px; height: 240px; bottom: 0%; left: 10%; z-index: 3; }
+        .item-5 { width: 120px; height: 120px; top: 35%; right: 0%; z-index: 1; opacity: 0.4; }
 
-        /* Pagination - matching blog styles exactly */
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 8px;
-          margin-top: 60px;
-        }
+        .photography-archive-section { margin-bottom: 100px; }
+        .archive-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 50px; }
+        .archive-title { font-size: 2.2rem; color: #fff; margin-bottom: 8px; }
+        .archive-subtitle { color: var(--text-muted); font-size: 1rem; }
+        .archive-filters { display: flex; gap: 10px; }
+        .filter-chip { padding: 8px 20px; border-radius: 100px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .filter-chip.active { background: var(--accent-green); color: #000; border-color: var(--accent-green); }
 
-        .page-btn {
-          width: 40px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 10px;
-          border: 1px solid var(--border-color);
-          background: transparent;
-          color: var(--text-secondary);
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        .photo-card-wrapper { border-radius: 24px; overflow: hidden; transition: all 0.4s; border: 1px solid rgba(255,255,255,0.05); }
+        .photo-card-wrapper:hover { transform: translateY(-8px); border-color: rgba(16, 185, 129, 0.3); }
+        .photo-card-image { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #111; }
+        .photo-card-image img { width: 100%; height: 100%; object-fit: cover; transition: all 0.6s; }
+        .photo-card-wrapper:hover .photo-card-image img { transform: scale(1.08); }
+        .photo-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent 40%, transparent 60%, rgba(0,0,0,0.5)); opacity: 0; transition: all 0.4s; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+        .photo-card-wrapper:hover .photo-card-overlay { opacity: 1; }
+        .p-category { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent-green); letter-spacing: 0.1em; }
+        .overlay-bottom { display: flex; gap: 10px; justify-content: flex-end; }
+        .p-action-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); cursor: pointer; transition: all 0.2s; }
+        .p-action-btn:hover { background: var(--accent-green); color: #000; border-color: var(--accent-green); }
+        
+        .photo-card-info { padding: 20px; }
+        .photo-title { font-size: 1.1rem; margin-bottom: 10px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .photo-metadata { display: flex; gap: 16px; color: var(--text-muted); font-size: 0.8rem; }
+        .photo-metadata span { display: flex; align-items: center; gap: 5px; }
 
-        .page-btn:hover {
-          background: rgba(255,255,255,0.05);
-          color: var(--text-primary);
-          border-color: rgba(255,255,255,0.2);
-        }
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 50px; }
+        .page-nav { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .page-numbers { display: flex; gap: 8px; }
+        .page-number { width: 44px; height: 44px; border-radius: 12px; border: 1px solid transparent; background: none; color: var(--text-muted); font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .page-number.active { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.2); }
 
-        .page-btn.active {
-          background: var(--accent-green);
-          color: #000;
-          border-color: var(--accent-green);
-        }
-
-        .page-btn.prev, .page-btn.next {
-          width: 40px;
-        }
-
-        .page-btn.disabled {
-          opacity: 0.2;
-          cursor: not-allowed;
-          pointer-events: none;
-        }
-
-        @media (max-width: 1024px) {
-          .photo-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        @media (max-width: 640px) {
-          .photo-grid {
-            grid-template-columns: 1fr;
-          }
-          .banner-title {
-            font-size: 2.2rem;
-          }
+        @media (max-width: 1000px) {
+          .story-display-wrapper { grid-template-columns: 1fr; padding: 30px; }
+          .banner-title { font-size: 3rem; }
+          .story-title-main { font-size: 2.2rem; }
+          .dynamic-photo-stack { height: 300px; }
+          .item-0 { width: 160px; height: 220px; }
+          .item-1, .item-2, .item-3, .item-4, .item-5 { width: 100px; height: 140px; }
         }
       `}</style>
     </div>

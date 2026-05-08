@@ -9,26 +9,52 @@ import { supabase } from '@/lib/supabase';
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState('সব');
   const [posts, setPosts] = useState<any[]>([]);
+  const [featuredIds, setFeaturedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 12;
 
   useEffect(() => {
-    async function fetchPosts() {
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .not('title', 'ilike', '%আড্ডা পুষ্ট%')
-        .order('publish_date', { ascending: false, nullsFirst: false } as any);
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        // Fetch sort order first
+        const { data: sortData } = await supabase
+          .from('skills')
+          .select('evidence')
+          .eq('category', 'global_config')
+          .eq('name', 'sort_order')
+          .maybeSingle();
+        
+        const currentSortOrder = sortData?.evidence || 'desc';
 
-      if (data) {
-        setPosts(data);
+        const [postsRes, configRes] = await Promise.all([
+          supabase
+            .from('posts')
+            .select('*')
+            .not('title', 'ilike', '%আড্ডা পুষ্ট%')
+            .order('created_at', { ascending: currentSortOrder === 'asc' }),
+          supabase
+            .from('skills')
+            .select('*')
+            .eq('category', 'blog_config')
+            .eq('name', 'featured_post_ids')
+            .maybeSingle()
+        ]);
+
+        if (postsRes.data) {
+          setPosts(postsRes.data);
+        }
+        if (configRes.data && configRes.data.evidence) {
+          setFeaturedIds(JSON.parse(configRes.data.evidence));
+        }
+      } catch (e) {
+        console.error("Error fetching blog data:", e);
       }
-
       setIsLoading(false);
     }
 
-    fetchPosts();
+    fetchData();
   }, []);
 
   const categories = [
@@ -44,8 +70,16 @@ export default function BlogPage() {
     ? posts 
     : posts.filter(post => post.category === activeCategory || (activeCategory === 'ভাবনা' && post.category === 'গল্প ও ভাবনা'));
 
-  const featuredPosts = filteredPosts.filter(p => p.publish_date && p.publish_date !== 'অজানা তারিখ').slice(0, 5);
-  const archivePosts = filteredPosts.slice(featuredPosts.length);
+  // Logic: Featured posts are those selected in Admin. If none selected, take latest 5.
+  // Using String() conversion to ensure match regardless of DB type (int vs string)
+  const featuredPosts = featuredIds.length > 0 
+    ? featuredIds
+        .map(id => posts.find(p => String(p.id) === String(id)))
+        .filter(p => p !== undefined)
+    : filteredPosts.filter(p => p.publish_date && p.publish_date !== 'অজানা তারিখ').slice(0, 5);
+
+  // Archive posts are all OTHER posts
+  const archivePosts = filteredPosts.filter(p => !featuredPosts.find(f => String(f.id) === String(p.id)));
 
   // Pagination logic for archive
   const indexOfLastPost = currentPage * postsPerPage;
@@ -131,7 +165,7 @@ export default function BlogPage() {
                       <div className="category-badge-pill bengali">{post.category}</div>
                       <div className="slider-content">
                           <span className="slider-date"><Calendar size={14} /> {post.publish_date && post.publish_date !== 'অজানা তারিখ' ? post.publish_date : 'সাম্প্রতিক'}</span>
-                          <h3 className="slider-title bengali">{post.title}</h3>
+                          <h3 className="slider-title bengali" dangerouslySetInnerHTML={{ __html: post.title }}></h3>
                           <p className="slider-excerpt bengali">{post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে।'}</p>
 
                          <Link href={`/blog/${post.slug}`} className="read-link-overlay">
@@ -142,6 +176,9 @@ export default function BlogPage() {
                 </div>
               </div>
             ))}
+            {featuredPosts.length === 0 && (
+              <p style={{ color: 'var(--text-muted)', textAlign: 'center', width: '100%', padding: '40px' }}>No featured stories found.</p>
+            )}
           </div>
         )}
       </div>
@@ -175,7 +212,7 @@ export default function BlogPage() {
               <div className="archive-info">
                 <span className="post-date">{post.publish_date && post.publish_date !== 'অজানা তারিখ' ? post.publish_date : 'সাম্প্রতিক'}</span>
 
-                <h3 className="archive-title bengali">{post.title}</h3>
+                <h3 className="archive-title bengali" dangerouslySetInnerHTML={{ __html: post.title }}></h3>
                 <p className="archive-text bengali">
                   {post.excerpt || 'এইখানে ব্লগের সারাংশ থাকবে। সর্বোচ্চ তিন লাইনে এটি সীমাবদ্ধ থাকবে যাতে গ্রিড লেআউট সুন্দর দেখায় এবং পড়ার আগ্রহ তৈরি করে...'}
                 </p>
@@ -185,6 +222,9 @@ export default function BlogPage() {
               </div>
             </div>
           ))}
+          {currentArchivePosts.length === 0 && !isLoading && (
+            <p style={{ gridColumn: '1/-1', textAlign: 'center', color: 'var(--text-muted)', padding: '60px' }}>No archive stories found in this category.</p>
+          )}
         </div>
 
         {/* Pagination Controls */}
@@ -220,385 +260,40 @@ export default function BlogPage() {
       </div>
 
       <style jsx>{`
-        .blog-archive-section {
-          margin-top: 100px;
-          margin-bottom: 120px;
-        }
-
-        .archive-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 40px;
-          align-items: stretch;
-        }
-
-        .archive-card {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          background: rgba(255,255,255,0.01);
-          padding: 16px;
-          border-radius: 24px;
-          border: 1px solid transparent;
-          transition: all 0.4s ease;
-        }
-
-        .archive-card:hover {
-          background: rgba(255,255,255,0.03);
-          border-color: rgba(16, 185, 129, 0.2);
-          transform: translateY(-8px);
-        }
-
-        .archive-img-wrap {
-          width: 100%;
-          height: 240px; /* Fixed height to ensure consistency */
-          border-radius: 16px;
-          overflow: hidden;
-          margin-bottom: 20px;
-          border: 1px solid var(--border-color);
-          flex-shrink: 0;
-          background-color: #111;
-        }
-
-        .blog-banner-wrap {
-          width: 100%;
-          border-radius: 24px;
-          overflow: hidden;
-          margin-bottom: 40px;
-          height: 250px;
-          position: relative;
-          border: 1px solid var(--border-color);
-        }
-        
-        .blog-banner-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .blog-intro {
-          margin-bottom: 60px;
-        }
-
-        .blog-title {
-          font-size: 3.5rem;
-          margin-bottom: 16px;
-          letter-spacing: -0.04em;
-        }
-
-        .blog-subtitle {
-          font-size: 1.1rem;
-          color: var(--text-secondary);
-          max-width: 600px;
-          line-height: 1.6;
-        }
-
-        .statement-banner {
-          width: 100%;
-          min-height: 220px;
-          margin-bottom: 60px;
-          position: relative;
-          background: url('/quote_bg_v2.png') center/cover no-repeat;
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          padding: 40px 60px;
-          border-radius: 24px;
-          border: 1px solid rgba(16, 185, 129, 0.1);
-          overflow: hidden;
-        }
-
-        .statement-banner::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.85) 100%);
-        }
-
-        .statement-content {
-          position: relative;
-          z-index: 1;
-          max-width: 550px;
-          text-align: left;
-        }
-
-        .statement-text {
-          font-size: 1.15rem;
-          line-height: 1.7;
-          color: rgba(255, 255, 255, 0.9);
-          font-weight: 300;
-          letter-spacing: 0.01em;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-          border-left: 3px solid var(--accent-green);
-          padding-left: 20px;
-        }
-
-        @media (max-width: 768px) {
-          .statement-text {
-            font-size: 1.3rem;
-          }
-          .statement-banner {
-            min-height: auto;
-            padding: 40px 20px;
-          }
-        }
-
-        .category-menu-container {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 60px;
-          padding: 24px 0;
-          border-bottom: 1px solid var(--border-color);
-        }
-
-        .blog-search {
-          display: flex;
-          align-items: center;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.1);
-          padding: 10px 20px;
-          border-radius: 12px;
-          width: 320px;
-          transition: all 0.3s ease;
-        }
-
-        .blog-search:focus-within {
-          border-color: var(--accent-green);
-          background: rgba(255,255,255,0.06);
-        }
-
-        .search-icon {
-          color: var(--text-muted);
-          margin-right: 12px;
-        }
-
-        .search-input {
-          background: none;
-          border: none;
-          color: var(--text-primary);
-          outline: none;
-          width: 100%;
-          font-family: inherit;
-          font-size: 0.95rem;
-        }
-
-        .search-input::placeholder {
-          color: var(--text-muted);
-        }
-
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 12px;
-          margin-top: 60px;
-        }
-
-        .page-btn {
-          width: 44px;
-          height: 44px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 10px;
-          border: 1px solid var(--border-color);
-          background: rgba(255,255,255,0.02);
-          color: var(--text-secondary);
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .page-btn:hover {
-          background: rgba(255,255,255,0.05);
-          color: var(--text-primary);
-          border-color: rgba(255,255,255,0.2);
-        }
-
-        .page-btn.active {
-          background: var(--accent-green);
-          color: #000;
-          border-color: var(--accent-green);
-        }
-
-        .page-btn.prev, .page-btn.next {
-          width: auto;
-          padding: 0 20px;
-          gap: 8px;
-        }
-
-        .page-btn.disabled {
-          opacity: 0.3;
-          cursor: not-allowed;
-          pointer-events: none;
-        }
-
-        .category-menu {
-          display: flex;
-          gap: 48px;
-        }
-
-        .category-item {
-          background: none;
-          border: none;
-          color: var(--text-secondary);
-          font-size: 1.15rem;
-          font-weight: 500;
-          cursor: pointer;
-          position: relative;
-          transition: var(--transition-smooth);
-          padding: 8px 0;
-        }
-
-        .category-item:hover, .category-item.active {
-          color: var(--accent-green);
-        }
-
-        .category-item.active::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background: var(--accent-green);
-          box-shadow: 0 0 10px var(--accent-green-glow);
-        }
-
-        .featured-slider-track {
-          display: flex;
-          gap: 32px;
-          overflow-x: auto;
-          padding: 10px 0 30px 0;
-          scrollbar-width: none;
-          scroll-snap-type: x mandatory;
-        }
-
-        .featured-slider-track::-webkit-scrollbar {
-          display: none;
-        }
-
-        .featured-slider-item {
-          min-width: 500px;
-          flex: 0 0 500px;
-          scroll-snap-align: start;
-        }
-
-        .slider-card-image-bg {
-          height: 450px;
-          border-radius: 24px;
-          background: #111;
-          position: relative;
-          overflow: hidden;
-          border: 1px solid var(--border-color);
-        }
-
-        .slider-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%);
-          padding: 40px;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-        }
-
-        .category-badge-pill {
-          position: absolute;
-          top: 30px;
-          left: 30px;
-          background: var(--accent-green);
-          color: #000;
-          padding: 6px 16px;
-          border-radius: 8px;
-          font-weight: 700;
-          font-size: 0.9rem;
-        }
-
-        .slider-date {
-          color: var(--text-muted);
-          font-size: 0.85rem;
-          margin-bottom: 12px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .slider-title {
-          font-size: 1.8rem;
-          margin-bottom: 16px;
-          line-height: 1.3;
-          color: #fff;
-        }
-
-        .slider-excerpt {
-          color: rgba(255,255,255,0.7);
-          font-size: 1rem;
-          margin-bottom: 24px;
-          line-height: 1.6;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .read-link-overlay {
-          color: var(--accent-green);
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: var(--transition-smooth);
-        }
-
-        .read-link-overlay:hover {
-          gap: 14px;
-        }
-
-        .blog-archive-section {
-          margin-bottom: 80px;
-        }
-
-        .archive-info {
-          padding-top: 10px;
-        }
-
-        .post-date {
-          font-size: 0.85rem;
-          color: var(--text-muted);
-          margin-bottom: 8px;
-          display: block;
-        }
-
-        @media (max-width: 1024px) {
-          .category-menu-container {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 24px;
-          }
-          .blog-search {
-            width: 100%;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .banner-title {
-            font-size: 2.5rem;
-          }
-          .blog-search {
-            width: 100%;
-          }
-        }
-
-        .signature-watermark {
-          font-family: var(--font-outfit);
-          font-weight: 900;
-          font-size: 2rem;
-          color: rgba(16, 185, 129, 0.2);
-          letter-spacing: 0.1em;
-          user-select: none;
-        }
+        .blog-archive-section { margin-top: 100px; margin-bottom: 120px; }
+        .archive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; align-items: stretch; }
+        .archive-card { display: flex; flex-direction: column; height: 100%; background: rgba(255,255,255,0.01); padding: 16px; border-radius: 24px; border: 1px solid transparent; transition: all 0.4s ease; }
+        .archive-card:hover { background: rgba(255,255,255,0.03); border-color: rgba(16, 185, 129, 0.2); transform: translateY(-8px); }
+        .archive-img-wrap { width: 100%; height: 240px; border-radius: 16px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-color); flex-shrink: 0; background-color: #111; }
+        .statement-banner { width: 100%; min-height: 220px; margin-bottom: 60px; position: relative; background: url('/quote_bg_v2.png') center/cover no-repeat; display: flex; align-items: center; justify-content: flex-end; padding: 40px 60px; border-radius: 24px; border: 1px solid rgba(16, 185, 129, 0.1); overflow: hidden; }
+        .statement-banner::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.85) 100%); }
+        .statement-content { position: relative; z-index: 1; max-width: 550px; text-align: left; }
+        .statement-text { font-size: 1.15rem; line-height: 1.7; color: rgba(255, 255, 255, 0.9); font-weight: 300; letter-spacing: 0.01em; text-shadow: 0 2px 4px rgba(0,0,0,0.5); border-left: 3px solid var(--accent-green); padding-left: 20px; }
+        .category-menu-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; padding: 24px 0; border-bottom: 1px solid var(--border-color); }
+        .blog-search { display: flex; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 12px; width: 320px; transition: all 0.3s ease; }
+        .search-icon { color: var(--text-muted); margin-right: 12px; }
+        .search-input { background: none; border: none; color: var(--text-primary); outline: none; width: 100%; font-family: inherit; font-size: 0.95rem; }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 60px; }
+        .page-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .page-btn.active { background: var(--accent-green); color: #000; border-color: var(--accent-green); }
+        .page-btn.prev, .page-btn.next { width: auto; padding: 0 20px; }
+        .category-menu { display: flex; gap: 48px; }
+        .category-item { background: none; border: none; color: var(--text-secondary); font-size: 1.15rem; font-weight: 500; cursor: pointer; position: relative; padding: 8px 0; }
+        .category-item.active { color: var(--accent-green); }
+        .category-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent-green); }
+        .featured-slider-track { display: flex; gap: 32px; overflow-x: auto; padding: 10px 0 30px 0; scrollbar-width: none; }
+        .featured-slider-item { min-width: 500px; flex: 0 0 500px; }
+        .slider-card-image-bg { height: 450px; border-radius: 24px; background: #111; position: relative; overflow: hidden; border: 1px solid var(--border-color); }
+        .slider-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%); padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .category-badge-pill { position: absolute; top: 30px; left: 30px; background: var(--accent-green); color: #000; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; }
+        .slider-date { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .slider-title { font-size: 1.8rem; margin-bottom: 16px; line-height: 1.3; color: #fff; }
+        .slider-excerpt { color: rgba(255,255,255,0.7); font-size: 1rem; margin-bottom: 24px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .read-link-overlay { color: var(--accent-green); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .read-link-overlay:hover { gap: 14px; }
+        .signature-watermark { font-family: var(--font-outfit); font-weight: 900; font-size: 2rem; color: rgba(16, 185, 129, 0.2); letter-spacing: 0.1em; user-select: none; }
+        @media (max-width: 1024px) { .category-menu-container { flex-direction: column; align-items: flex-start; gap: 24px; } .blog-search { width: 100%; } .featured-slider-item { min-width: 80vw; } .archive-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .archive-grid { grid-template-columns: 1fr; } .category-menu { gap: 20px; overflow-x: auto; width: 100%; padding-bottom: 10px; } .category-item { font-size: 1rem; flex-shrink: 0; } }
       `}</style>
     </div>
   );

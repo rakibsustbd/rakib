@@ -1,19 +1,21 @@
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: '.env.local' });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
-async function checkTable() {
-  const { data, error } = await supabase.from('photos').select('*').limit(1);
-  if (error && error.code === '42P01') {
-    console.log("Table 'photos' does not exist.");
-  } else if (error) {
-    console.log("Error checking table:", error.message);
-  } else {
-    console.log("Table 'photos' exists.");
-  }
+async function check() {
+  const { count: photoCount } = await supabase.from('photos').select('*', { count: 'exact', head: true });
+  const { count: blogCount } = await supabase.from('blogs').select('*', { count: 'exact', head: true });
+  const { count: expCount } = await supabase.from('experiences').select('*', { count: 'exact', head: true });
+  const { count: skillCount } = await supabase.from('skills').select('*', { count: 'exact', head: true });
+
+  console.log(`Photos: ${photoCount}`);
+  console.log(`Blogs: ${blogCount}`);
+  console.log(`Experiences: ${expCount}`);
+  console.log(`Skills: ${skillCount}`);
 }
 
-checkTable();
+check();
