@@ -341,9 +341,10 @@ export default function ResumePage() {
         .profile-contacts { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
         .brands-title { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--text-muted); text-align: center; margin-bottom: 40px; font-weight: 800; }
-        .brands-grid { display: flex; justify-content: space-between; align-items: center; opacity: 0.7; gap: 30px; flex-wrap: wrap; }
-        .brand-item { display: flex; align-items: center; justify-content: center; }
-        .brand-logo { height: 32px; object-fit: contain; filter: brightness(0) invert(1); }
+        .brands-grid { display: flex; justify-content: space-around; align-items: center; gap: 40px; flex-wrap: wrap; padding: 20px 0; }
+        .brand-item { display: flex; align-items: center; justify-content: center; min-width: 120px; }
+        .brand-logo { height: 45px; max-width: 140px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
+        .brand-logo:hover { opacity: 1; transform: scale(1.05); }
         .resume-layout { display: grid; grid-template-columns: 280px 1fr; gap: 80px; }
         .inner-nav { position: sticky; top: 120px; height: fit-content; }
         .nav-heading { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 30px; }
