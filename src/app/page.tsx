@@ -120,9 +120,8 @@ export default function ResumePage() {
         </div>
 
         <div className="hero-right">
-          <h1 className="hero-title">
-            Building Business <br />
-            <span className="accent-text">That Matters</span>
+          <h1 className="hero-title animate-slide-up">
+            Building Business <span className="text-accent-green">That Matters</span>
           </h1>
           <p className="hero-bio">{displayProfile.bio}</p>
           
@@ -342,9 +341,9 @@ export default function ResumePage() {
       <style jsx>{`
         .container { max-width: 1200px; margin: 0 auto; padding: 100px 20px; }
         .hero-section { display: grid; grid-template-columns: 350px 1fr; gap: 60px; align-items: center; }
-        .hero-title { font-size: 3.5rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; color: #fff; font-weight: 900; }
+        .hero-title { font-size: 3.2rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; color: #fff; font-weight: 900; white-space: nowrap; }
         .hero-bio { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; max-width: 750px; margin-bottom: 40px; }
-        .accent-text { color: var(--accent-green); }
+        .text-accent-green { color: var(--accent-green); }
         .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 40px; }
         .stat-pill { padding: 20px; text-align: center; }
         .stat-value { display: block; font-size: 1.8rem; font-weight: 800; color: var(--accent-green); margin-bottom: 4px; }
