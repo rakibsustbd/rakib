@@ -344,11 +344,18 @@ export default function ResumePage() {
         .profile-contacts { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
         .brands-title { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--text-muted); text-align: center; margin-bottom: 40px; font-weight: 800; }
-        .brands-grid { display: flex; justify-content: space-around; align-items: center; gap: 50px; flex-wrap: wrap; padding: 30px 0; }
-        .brand-item { display: flex; align-items: center; justify-content: center; min-width: 140px; }
-        .brand-logo { height: 60px; max-width: 180px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
+        .brands-grid { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: nowrap; padding: 20px 0; overflow-x: auto; scrollbar-width: none; }
+        .brands-grid::-webkit-scrollbar { display: none; }
+        .brand-item { display: flex; align-items: center; justify-content: center; flex: 1; min-width: 100px; }
+        .brand-logo { height: 60px; width: auto; max-width: 150px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
+        /* Boost size for smaller logos */
+        .brand-item:nth-child(1) .brand-logo, 
+        .brand-item:nth-child(2) .brand-logo, 
+        .brand-item:nth-child(3) .brand-logo { height: 85px; } 
+        .brand-item:nth-child(5) .brand-logo { height: 80px; }
+        
         .brand-logo:hover { opacity: 1; transform: scale(1.1); filter: none; }
-        .brand-text-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.05em; color: #fff; opacity: 0.8; }
+        .brand-text-logo { font-size: 2rem; font-weight: 900; letter-spacing: 0.05em; color: #fff; opacity: 0.8; }
         .resume-layout { display: grid; grid-template-columns: 280px 1fr; gap: 80px; }
         .inner-nav { position: sticky; top: 120px; height: fit-content; }
         .nav-heading { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 30px; }
