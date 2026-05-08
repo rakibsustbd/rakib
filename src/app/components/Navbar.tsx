@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Code, UserCircle, Share2, Menu, X } from 'lucide-react';
+import { Mail, Code, UserCircle, Share2, Menu, X, ArrowRight } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
