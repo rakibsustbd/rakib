@@ -397,10 +397,23 @@ export default function ResumePage() {
         @media (max-width: 1100px) {
           .hero-section { grid-template-columns: 1fr; gap: 40px; }
           .resume-layout { grid-template-columns: 1fr; gap: 40px; }
-          .inner-nav { position: sticky; top: 90px; background: #000; z-index: 100; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-          .inner-nav-list { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+          .inner-nav { 
+            position: sticky; 
+            top: 70px; 
+            background: rgba(5, 5, 5, 0.95); 
+            backdrop-filter: blur(10px);
+            z-index: 100; 
+            padding: 15px 0; 
+            margin: 0 -20px 40px;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08); 
+          }
+          .nav-heading { display: none; }
+          .inner-nav-list { flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 10px; }
           .inner-nav-list::-webkit-scrollbar { display: none; }
-          .inner-nav-item { white-space: nowrap; border-bottom: none; border-radius: 12px; padding: 10px 20px; }
+          .inner-nav-item { white-space: nowrap; border-bottom: none; border-radius: 100px; padding: 10px 22px; background: rgba(255,255,255,0.03); font-size: 0.85rem; border: 1px solid transparent; }
+          .inner-nav-item.active { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+          
           .hero-stats { grid-template-columns: 1fr 1fr; }
           .hero-title { font-size: 2.8rem; }
           .container { padding: 80px 20px; }
@@ -418,7 +431,12 @@ export default function ResumePage() {
           .profile-card { padding: 25px; }
           .profile-image-placeholder { width: 120px; height: 120px; }
           .profile-name { font-size: 1.5rem; }
-          .competency-grid, .education-grid { grid-template-columns: 1fr; }
+          
+          .competency-grid, .education-grid { grid-template-columns: 1fr; gap: 20px; }
+          .content-card { padding: 24px; flex-direction: column; gap: 15px; align-items: flex-start; width: 100%; max-width: 100%; overflow: hidden; }
+          .card-body h3 { font-size: 1.1rem; line-height: 1.4; }
+          .card-body p { font-size: 0.9rem; }
+          
           .section-heading-minimal { margin-bottom: 30px; gap: 15px; }
           .section-icon-box { width: 44px; height: 44px; }
           .section-icon-box :global(svg) { width: 20px; height: 20px; }
@@ -427,6 +445,9 @@ export default function ResumePage() {
           .brand-item { flex: 0 0 calc(50% - 20px); }
           .brand-logo { height: 50px !important; }
           .brand-item:nth-child(5) .brand-logo { height: 70px !important; }
+          
+          .skills-hashtag-container { gap: 10px; }
+          .skill-hashtag-box { padding: 20px; flex: 1 1 100%; }
         }
 
         @media (max-width: 480px) {
@@ -436,6 +457,7 @@ export default function ResumePage() {
           .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
           .brand-item { flex: 0 0 100%; }
           .brand-box { padding: 20px; }
+          .inner-nav { top: 60px; margin: 0 -15px 30px; padding: 15px; }
         }
       `}</style>
     </div>
