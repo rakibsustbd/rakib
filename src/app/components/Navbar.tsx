@@ -38,11 +38,6 @@ export default function Navbar() {
       </ul>
 
       <div className="social-links-minimal">
-        <div className="social-links desktop-only" style={{ marginBottom: 0 }}>
-          <a href="#" className="social-item"><Code size={18} /></a>
-          <a href="#" className="social-item"><UserCircle size={18} /></a>
-          <a href="#" className="social-item"><Mail size={18} /></a>
-        </div>
         <button 
           className="mobile-menu-btn" 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -75,20 +70,13 @@ export default function Navbar() {
             ))}
           </ul>
           <div className="mobile-menu-footer">
-            <p>GET IN TOUCH</p>
-            <div className="social-links">
-               <a href="#" className="social-item"><Mail size={20} /></a>
-               <a href="#" className="social-item"><UserCircle size={20} /></a>
-               <a href="#" className="social-item"><Code size={20} /></a>
-            </div>
+            <p>© {new Date().getFullYear()} Ahmed Rakib Uddin</p>
           </div>
         </div>
       )}
 
       <style jsx>{`
         .social-links-minimal { display: flex; align-items: center; z-index: 3000; }
-        .social-item { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; color: var(--text-secondary); margin-left: 10px; transition: all 0.2s; }
-        .social-item:hover { color: var(--accent-green); background: rgba(16, 185, 129, 0.1); }
         .mobile-menu-btn { background: none; border: none; color: #fff; cursor: pointer; display: none; padding: 8px; border-radius: 12px; }
         .mobile-menu-btn:hover { background: rgba(255,255,255,0.05); }
         
@@ -103,11 +91,9 @@ export default function Navbar() {
         
         .mobile-menu-footer { margin-top: auto; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); }
         .mobile-menu-footer p { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 20px; font-weight: 700; }
-        .mobile-menu-footer .social-links { display: flex; gap: 15px; }
 
         @media (max-width: 768px) {
           .nav-links { display: none; }
-          .desktop-only { display: none; }
           .mobile-menu-btn { display: block; }
         }
       `}</style>
