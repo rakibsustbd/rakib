@@ -98,6 +98,7 @@ export default function AdminResume() {
           i.category !== 'competency' && 
           i.category !== 'profile_config' &&
           i.category !== 'global_config' &&
+          i.category !== 'blog_config' &&
           i.category !== 'photo_story'
         ));
       } else if (activeTab === 'competencies') {

@@ -48,6 +48,7 @@ export default function ResumePage() {
         setSkills(skillsRes.data.filter(s => 
           s.category !== 'competency' && 
           s.category !== 'global_config' && 
+          s.category !== 'blog_config' &&
           s.category !== 'photo_story' &&
           s.category !== 'profile_config'
         ));
