@@ -351,7 +351,7 @@ export default function ResumePage() {
         .brand-item:nth-child(1) .brand-logo, 
         .brand-item:nth-child(2) .brand-logo, 
         .brand-item:nth-child(3) .brand-logo { height: 85px; } 
-        .brand-item:nth-child(5) .brand-logo { height: 110px; }
+        .brand-item:nth-child(5) .brand-logo { height: 140px; max-width: 200px; }
         
         .brand-logo:hover { opacity: 1; transform: scale(1.1); filter: none; }
         .brand-text-logo { font-size: 2.2rem; font-weight: 900; letter-spacing: 0.05em; color: #fff; opacity: 0.8; }
