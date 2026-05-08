@@ -339,8 +339,8 @@ export default function ResumePage() {
       </div>
 
       <style jsx>{`
-        .container { max-width: 1200px; margin: 0 auto; padding: 100px 20px; }
-        .hero-section { display: grid; grid-template-columns: 350px 1fr; gap: 60px; align-items: center; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 100px 20px; overflow-x: hidden; }
+        .hero-section { display: grid; grid-template-columns: minmax(0, 350px) minmax(0, 1fr); gap: 60px; align-items: center; }
         .hero-title { font-size: 3.2rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; color: #fff; font-weight: 900; white-space: nowrap; }
         .hero-bio { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; max-width: 750px; margin-bottom: 40px; }
         .text-accent-green { color: var(--accent-green); }
@@ -359,7 +359,7 @@ export default function ResumePage() {
         .profile-contacts { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
         .brand-box { padding: 25px 40px; }
-        .brands-grid { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: nowrap; padding: 0; overflow-x: auto; scrollbar-width: none; }
+        .brands-grid { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; padding: 0; }
         .brands-grid::-webkit-scrollbar { display: none; }
         .brand-item { display: flex; align-items: center; justify-content: center; flex: 1; min-width: 100px; }
         .brand-logo { height: 60px; width: auto; max-width: 150px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
@@ -371,7 +371,7 @@ export default function ResumePage() {
         
         .brand-logo:hover { opacity: 1; transform: scale(1.1); filter: none; }
         .brand-text-logo { font-size: 2.2rem; font-weight: 900; letter-spacing: 0.05em; color: #fff; opacity: 0.8; }
-        .resume-layout { display: grid; grid-template-columns: 280px 1fr; gap: 80px; }
+        .resume-layout { display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 80px; }
         .inner-nav { position: sticky; top: 120px; height: fit-content; }
         .nav-heading { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 30px; }
         .inner-nav-list { list-style: none; padding: 0; }
@@ -390,7 +390,7 @@ export default function ResumePage() {
         .skill-hashtag { color: var(--accent-green); font-weight: 800; font-size: 1.1rem; display: block; margin-bottom: 10px; }
         .skill-hashtag-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
         .experience-list { display: flex; flex-direction: column; gap: 30px; }
-        .exp-item { padding: 40px; position: relative; }
+        .exp-item { padding: 30px; position: relative; box-sizing: border-box; width: 100%; }
         .exp-marker { position: absolute; left: 0; top: 40px; width: 4px; height: 30px; background: var(--accent-green); border-radius: 0 4px 4px 0; }
         .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
         .exp-company { display: block; color: var(--accent-green); font-weight: 700; font-size: 0.9rem; margin-top: 5px; }
@@ -408,71 +408,82 @@ export default function ResumePage() {
         .empty-state { color: var(--text-muted); font-style: italic; }
         @media (max-width: 1100px) {
           .hero-section { grid-template-columns: 1fr; gap: 40px; }
-          .resume-layout { grid-template-columns: 1fr; gap: 40px; }
-          .inner-nav { 
-            position: sticky; 
-            top: 70px; 
-            background: rgba(5, 5, 5, 0.95); 
+          .resume-layout { grid-template-columns: 1fr; gap: 0; }
+          .inner-nav {
+            position: sticky;
+            top: 70px;
+            background: rgba(5, 5, 5, 0.97);
             backdrop-filter: blur(10px);
-            z-index: 100; 
-            padding: 15px 0; 
+            z-index: 100;
             margin: 0 -20px 40px;
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08); 
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            width: calc(100% + 40px);
+            box-sizing: border-box;
           }
           .nav-heading { display: none; }
-          .inner-nav-list { flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 10px; }
+          .inner-nav-list { display: flex; flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 8px; }
           .inner-nav-list::-webkit-scrollbar { display: none; }
-          .inner-nav-item { white-space: nowrap; border-bottom: none; border-radius: 100px; padding: 10px 22px; background: rgba(255,255,255,0.03); font-size: 0.85rem; border: 1px solid transparent; }
+          .inner-nav-item { white-space: nowrap; border-bottom: none; border-radius: 100px; padding: 8px 18px; background: rgba(255,255,255,0.03); font-size: 0.85rem; border: 1px solid transparent; flex-shrink: 0; }
           .inner-nav-item.active { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
-          
           .hero-stats { grid-template-columns: 1fr 1fr; }
-          .hero-title { font-size: 2.8rem; }
+          .hero-title { font-size: 2.5rem; white-space: normal; }
           .container { padding: 80px 20px; }
-          .brands-grid { flex-wrap: wrap; justify-content: center; gap: 30px; }
-          .brand-item { flex: 0 0 calc(33.33% - 20px); min-width: 100px; }
+          .brands-grid { flex-wrap: wrap; justify-content: center; gap: 20px; }
+          .brand-item { flex: 0 0 calc(33.33% - 14px); min-width: 80px; box-sizing: border-box; }
         }
 
         @media (max-width: 768px) {
-          .hero-title { font-size: 1.8rem; margin-bottom: 20px; white-space: normal; line-height: 1.2; }
-          .hero-bio { font-size: 0.85rem; line-height: 1.6; }
-          .hero-stats { grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-          .stat-pill { padding: 12px; }
-          .stat-value { font-size: 1.2rem; }
-          .stat-label { font-size: 0.6rem; }
-          .profile-card { padding: 20px; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
-          .profile-image-placeholder { width: 100px; height: 100px; margin-bottom: 20px; }
-          .profile-name { font-size: 1.3rem; }
-          .profile-title { font-size: 0.8rem; margin-bottom: 15px; }
-          
-          .competency-grid, .education-grid { grid-template-columns: 1fr; gap: 15px; width: 100%; }
-          .content-card { padding: 20px; flex-direction: column; gap: 12px; align-items: flex-start; width: 100%; box-sizing: border-box; overflow: hidden; }
-          .card-body h3 { font-size: 1rem; line-height: 1.4; }
-          .card-body p { font-size: 0.85rem; }
-          
-          .section-heading-minimal { margin-bottom: 25px; gap: 12px; width: 100%; }
-          .section-icon-box { width: 40px; height: 40px; }
-          .section-icon-box :global(svg) { width: 18px; height: 18px; }
-          .exp-header { flex-direction: column; gap: 8px; }
+          .container { padding: 70px 16px; overflow-x: hidden; }
+          .hero-section { grid-template-columns: 1fr; gap: 24px; }
+          .hero-title { font-size: 1.8rem; margin-bottom: 16px; white-space: normal; line-height: 1.2; }
+          .hero-bio { font-size: 0.85rem; line-height: 1.6; max-width: 100%; }
+          .hero-stats { grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+          .stat-pill { padding: 12px 8px; }
+          .stat-value { font-size: 1.1rem; }
+          .stat-label { font-size: 0.58rem; }
+          .hero-actions { flex-direction: column; width: 100%; gap: 10px; }
+          .btn-primary, .btn-secondary { width: 100%; justify-content: center; padding: 14px 20px; font-size: 0.9rem; box-sizing: border-box; }
+          .profile-card { padding: 20px; width: 100%; box-sizing: border-box; }
+          .profile-image-placeholder { width: 90px; height: 90px; margin-bottom: 16px; }
+          .profile-name { font-size: 1.2rem; }
+          .profile-title { font-size: 0.78rem; margin-bottom: 14px; }
+          .brand-box { padding: 16px; width: 100%; box-sizing: border-box; }
+          .brands-grid { flex-wrap: wrap; justify-content: center; gap: 16px; }
+          .brand-item { flex: 0 0 calc(50% - 8px); min-width: 0; box-sizing: border-box; }
+          .brand-logo { height: 36px !important; max-width: 100%; object-fit: contain; }
+          .brand-item:nth-child(1) .brand-logo, .brand-item:nth-child(2) .brand-logo, .brand-item:nth-child(3) .brand-logo { height: 46px !important; }
+          .brand-item:nth-child(5) .brand-logo { height: 56px !important; }
+          .resume-layout { grid-template-columns: 1fr; }
+          .inner-nav { top: 60px; margin: 0 -16px 30px; padding: 10px 16px; width: calc(100% + 32px); box-sizing: border-box; }
+          .competency-grid, .education-grid { grid-template-columns: 1fr; gap: 12px; }
+          .content-card { padding: 16px; flex-direction: column; gap: 10px; align-items: flex-start; width: 100%; box-sizing: border-box; }
+          .card-icon-box { width: 36px; height: 36px; flex-shrink: 0; }
+          .card-body h3 { font-size: 0.95rem; line-height: 1.4; }
+          .card-body p { font-size: 0.82rem; }
+          .section-heading-minimal { margin-bottom: 20px; gap: 10px; width: 100%; }
+          .section-icon-box { width: 36px; height: 36px; }
+          .section-subtitle { font-size: 0.8rem; }
+          .exp-item { padding: 18px 16px; width: 100%; box-sizing: border-box; }
+          .exp-header { flex-direction: column; gap: 6px; margin-bottom: 14px; }
           .exp-meta { text-align: left; }
-          .brand-item { flex: 0 0 100%; max-width: 100%; box-sizing: border-box; }
-          .brand-logo { height: 40px !important; max-width: 100%; object-fit: contain; }
-          .brand-item:nth-child(5) .brand-logo { height: 60px !important; }
-          
+          .exp-duration { font-size: 0.85rem; }
+          .exp-location { font-size: 0.75rem; }
+          .exp-body p { font-size: 0.85rem; }
+          .exp-bullets li { font-size: 0.85rem; padding-left: 18px; margin-bottom: 8px; }
+          .experience-list { gap: 16px; }
           .skills-hashtag-container { gap: 8px; width: 100%; }
-          .skill-hashtag-box { padding: 15px; flex: 1 1 100%; box-sizing: border-box; }
-          .skill-hashtag { font-size: 1rem; }
-          .skill-hashtag-desc { font-size: 0.8rem; }
+          .skill-hashtag-box { padding: 14px; flex: 1 1 100%; box-sizing: border-box; }
+          .skill-hashtag { font-size: 0.95rem; }
+          .skill-hashtag-desc { font-size: 0.78rem; }
+          .mb-80 { margin-bottom: 40px; }
         }
 
         @media (max-width: 480px) {
-          .hero-title { font-size: 1.6rem; }
-          .hero-stats { grid-template-columns: 1fr; }
-          .hero-actions { flex-direction: column; width: 100%; gap: 12px; }
-          .btn-primary, .btn-secondary { width: 100%; justify-content: center; padding: 14px 24px; font-size: 0.9rem; box-sizing: border-box; }
-          .brand-item { flex: 0 0 100%; }
-          .brand-box { padding: 15px; width: 100%; box-sizing: border-box; }
-          .inner-nav { top: 60px; margin: 0 -20px 25px; padding: 12px 20px; width: calc(100% + 40px); box-sizing: border-box; }
+          .hero-title { font-size: 1.5rem; }
+          .hero-stats { grid-template-columns: 1fr 1fr; }
+          .brand-item { flex: 0 0 calc(50% - 8px); }
+          .inner-nav { margin: 0 -16px 24px; padding: 10px 16px; }
         }
       `}</style>
     </div>

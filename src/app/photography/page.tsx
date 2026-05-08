@@ -240,7 +240,7 @@ export default function PhotographyPage() {
         .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; cursor: pointer; transition: all 0.3s; }
         .dot.active { background: var(--accent-green); width: 24px; border-radius: 5px; }
 
-        .story-display-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; padding: 50px; border-radius: 40px; min-height: 400px; align-items: center; overflow: hidden; }
+        .story-display-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; padding: 50px; border-radius: 40px; min-height: 400px; align-items: center; overflow: hidden; box-sizing: border-box; width: 100%; }
         .story-content-side { max-width: 450px; z-index: 10; }
         .story-category-tag { color: var(--accent-green); font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; margin-bottom: 20px; display: block; }
         .story-title-main { font-size: 3rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 800; }
@@ -268,7 +268,7 @@ export default function PhotographyPage() {
         .filter-chip { padding: 8px 20px; border-radius: 100px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
         .filter-chip.active { background: var(--accent-green); color: #000; border-color: var(--accent-green); }
 
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 24px; width: 100%; }
         .photo-card-wrapper { border-radius: 24px; overflow: hidden; transition: all 0.4s; border: 1px solid rgba(255,255,255,0.05); }
         .photo-card-wrapper:hover { transform: translateY(-8px); border-color: rgba(16, 185, 129, 0.3); }
         .photo-card-image { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #111; }
@@ -293,38 +293,48 @@ export default function PhotographyPage() {
         .page-number.active { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.2); }
 
         @media (max-width: 1000px) {
-          .story-display-wrapper { grid-template-columns: 1fr; padding: 25px; gap: 30px; width: 100%; box-sizing: border-box; }
+          .container { overflow-x: hidden; }
+          .story-display-wrapper { grid-template-columns: 1fr; padding: 24px; gap: 24px; width: 100%; box-sizing: border-box; border-radius: 24px; }
+          .story-content-side { max-width: 100%; }
           .banner-title { font-size: 2.5rem; }
-          .story-title-main { font-size: 1.8rem; }
-          .dynamic-photo-stack { height: 320px; width: 100%; max-width: 100%; }
-          .item-0 { width: 160px; height: 220px; }
-          .item-1, .item-2, .item-3, .item-4, .item-5 { width: 100px; height: 140px; }
-          .container { padding: 70px 15px; }
+          .story-title-main { font-size: 1.6rem; }
+          .dynamic-photo-stack { height: 260px; width: 100%; overflow: hidden; }
+          .item-0 { width: 44%; height: 55%; top: 50%; left: 50%; }
+          .item-1 { width: 32%; height: 44%; top: 5%; left: 5%; }
+          .item-2 { width: 28%; height: 30%; top: 0%; right: 5%; }
+          .item-3 { width: 40%; height: 32%; bottom: 2%; right: 2%; }
+          .item-4 { width: 36%; height: 48%; bottom: 0%; left: 5%; }
+          .item-5 { width: 24%; height: 24%; top: 35%; right: 0%; }
+          .container { padding: 70px 16px; }
         }
 
         @media (max-width: 768px) {
-          .photography-hero-banner { height: 240px; border-radius: 20px; padding: 12px; width: 100%; box-sizing: border-box; }
-          .banner-grid-outer { gap: 8px; width: 100%; }
-          .banner-title { font-size: 1.8rem; margin-bottom: 8px; }
-          .banner-subtitle { font-size: 0.6rem; letter-spacing: 0.12em; }
-          .archive-header { flex-direction: column; align-items: flex-start; gap: 20px; width: 100%; }
-          .archive-filters { width: 100%; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; box-sizing: border-box; }
+          .container { padding: 60px 16px; overflow-x: hidden; }
+          .photography-hero-banner { height: 220px; border-radius: 18px; padding: 10px; width: 100%; box-sizing: border-box; }
+          .banner-grid-outer { gap: 6px; width: 100%; }
+          .banner-title { font-size: 1.6rem; margin-bottom: 8px; }
+          .banner-subtitle { font-size: 0.58rem; letter-spacing: 0.1em; }
+          .photography-stories-slider-container { margin-bottom: 40px; }
+          .story-display-wrapper { padding: 16px; gap: 20px; border-radius: 18px; }
+          .story-visual-side { display: none; }
+          .story-title-main { font-size: 1.4rem; margin-bottom: 14px; }
+          .story-description-main { font-size: 0.85rem; margin-bottom: 20px; }
+          .archive-header { flex-direction: column; align-items: flex-start; gap: 16px; width: 100%; }
+          .archive-filters { width: 100%; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; display: flex; box-sizing: border-box; }
           .archive-filters::-webkit-scrollbar { display: none; }
-          .filter-chip { white-space: nowrap; flex-shrink: 0; font-size: 0.8rem; padding: 8px 18px; }
-          .story-title-main { font-size: 1.5rem; }
-          .story-description-main { font-size: 0.85rem; }
-          .photo-grid { grid-template-columns: 1fr; gap: 20px; width: 100%; }
-          .section-title { font-size: 1.6rem; }
+          .filter-chip { white-space: nowrap; flex-shrink: 0; font-size: 0.8rem; padding: 7px 16px; }
+          .photo-grid { grid-template-columns: 1fr; gap: 16px; width: 100%; }
+          .archive-title { font-size: 1.6rem; }
+          .section-title { font-size: 1.5rem; }
+          .photography-archive-section { margin-bottom: 50px; }
+          .mb-80 { margin-bottom: 40px; }
         }
 
         @media (max-width: 480px) {
-          .banner-title { font-size: 1.5rem; }
-          .photography-hero-banner { height: 200px; }
-          .banner-grid-outer { grid-template-columns: repeat(2, 1fr); }
-          .story-display-wrapper { padding: 15px; border-radius: 20px; width: 100%; box-sizing: border-box; }
-          .dynamic-photo-stack { height: 240px; }
-          .item-0 { width: 120px; height: 160px; }
-          .item-1, .item-2, .item-3, .item-4, .item-5 { width: 70px; height: 90px; }
+          .banner-title { font-size: 1.3rem; }
+          .photography-hero-banner { height: 180px; }
+          .story-display-wrapper { padding: 14px; }
+          .story-title-main { font-size: 1.2rem; }
         }
       `}</style>
     </div>
