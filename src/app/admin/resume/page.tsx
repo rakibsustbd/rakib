@@ -94,7 +94,12 @@ export default function AdminResume() {
     
     if (data) {
       if (activeTab === 'skills') {
-        setItems(data.filter((i: any) => i.category !== 'competency' && i.category !== 'profile_config'));
+        setItems(data.filter((i: any) => 
+          i.category !== 'competency' && 
+          i.category !== 'profile_config' &&
+          i.category !== 'global_config' &&
+          i.category !== 'photo_story'
+        ));
       } else if (activeTab === 'competencies') {
         setItems(data.filter((i: any) => i.category === 'competency'));
       } else {
