@@ -32,12 +32,14 @@ export default function ResumePage() {
         supabase.from('education').select('*').order('order_index', { ascending: true })
       ]);
 
-      if (profileRes.data) {
+      if (profileRes.data && profileRes.data.length > 0) {
         const config: any = {};
         profileRes.data.forEach(item => {
           config[item.name] = item.evidence;
         });
         setProfile(config);
+      } else {
+        setProfile(null); // Explicitly null to trigger fallback
       }
 
       if (skillsRes.data) {
@@ -65,11 +67,11 @@ export default function ResumePage() {
     );
   }
 
-  // Fallback if profile not loaded
-  const displayProfile = profile || {
+  // Fallback if profile not loaded from DB
+  const displayProfile = (profile && Object.keys(profile).length > 0) ? profile : {
     name: 'Ahmed Rakib Uddin',
     title: 'Chief Executive Officer | Strategic Leader',
-    bio: 'Dynamic strategic professional with 18 years of leadership experience...',
+    bio: 'A visionary Strategic Business Leader with 18+ years of expertise in driving growth and operational excellence across Fintech, Telecom, and Service industries. Proven track record in scaling businesses, optimizing costs, and building market-leading products.',
     phone: '+880 1841 672 217',
     email: 'rakib_2001331022@yahoo.com',
     location: 'Dhaka, Bangladesh',
@@ -155,7 +157,7 @@ export default function ResumePage() {
           <h4 className="brands-title">EXPERIENCE WITH GLOBAL & LOCAL LEADERS</h4>
           <div className="brands-grid">
             <div className="brand-item">
-              <img src="/brands/bkash.png" alt="bKash" className="brand-logo" />
+              <div className="brand-icon-box">BKASH</div>
               <span>bKash</span>
             </div>
             <div className="brand-item">
@@ -167,7 +169,7 @@ export default function ResumePage() {
               <span>ADN Telecom</span>
             </div>
             <div className="brand-item">
-              <div className="brand-text-logo">QUBEE</div>
+              <img src="/brands/imagine-radio.png" alt="Qubee" className="brand-logo" />
               <span>Qubee</span>
             </div>
             <div className="brand-item">
@@ -211,7 +213,12 @@ export default function ResumePage() {
                  </div>
               </div>
               <div className="competency-grid">
-                 {competencies.map((comp, idx) => (
+                 {(competencies.length > 0 ? competencies : [
+                   { id: 1, name: 'Strategic Leadership', evidence: 'Directing complex business units and scaling operations from zero to market leadership.' },
+                   { id: 2, name: 'Product Innovation', evidence: 'Conceptualizing and launching disruptive products in Fintech and Service sectors.' },
+                   { id: 3, name: 'Financial Acumen', evidence: 'Managing P&L, optimizing operational costs, and driving significant GTV growth.' },
+                   { id: 4, name: 'Stakeholder Management', evidence: 'Aligning cross-functional teams and building relationships with global partners.' }
+                 ]).map((comp, idx) => (
                    <div key={comp.id} className="content-card glass-card">
                       <div className="card-icon-box">
                         {idx === 0 ? <TrendingUp size={24} /> : idx === 1 ? <Zap size={24} /> : idx === 2 ? <Code size={24} /> : <Users size={24} />}
@@ -237,7 +244,11 @@ export default function ResumePage() {
                  </div>
               </div>
               <div className="skills-hashtag-container">
-                {skills.map((item) => (
+                {(skills.length > 0 ? skills : [
+                  { id: 1, name: 'BusinessModeling', evidence: 'Designing sustainable revenue models for tech platforms.' },
+                  { id: 2, name: 'OperationalExcellence', evidence: 'Process re-engineering and automation for scale.' },
+                  { id: 3, name: 'FintechEcosystem', evidence: 'Deep knowledge of payment gateways and digital finance.' }
+                ]).map((item) => (
                   <div key={item.id} className="skill-hashtag-box glass-card">
                     <span className="skill-hashtag">#{item.name.replace(/\s+/g, '')}</span>
                     <p className="skill-hashtag-desc">{item.evidence}</p>
@@ -276,6 +287,9 @@ export default function ResumePage() {
                     </div>
                   </div>
                 ))}
+                {experiences.length === 0 && (
+                  <p className="empty-state">No experience data found. Please add it via the Admin panel.</p>
+                )}
               </div>
             </section>
           )}
@@ -300,6 +314,9 @@ export default function ResumePage() {
                     </div>
                   </div>
                 ))}
+                {education.length === 0 && (
+                   <p className="empty-state">No education data found.</p>
+                )}
               </div>
             </section>
           )}
@@ -309,7 +326,7 @@ export default function ResumePage() {
       <style jsx>{`
         .container { max-width: 1200px; margin: 0 auto; padding: 100px 20px; }
         .hero-section { display: grid; grid-template-columns: 350px 1fr; gap: 60px; align-items: center; }
-        .hero-title { font-size: 4.5rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; }
+        .hero-title { font-size: 4.5rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; color: #fff; font-weight: 900; }
         .hero-bio { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; max-width: 700px; margin-bottom: 40px; }
         .accent-text { color: var(--accent-green); }
         .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 40px; }
@@ -322,15 +339,15 @@ export default function ResumePage() {
         .profile-card { padding: 40px; text-align: center; }
         .profile-image-placeholder { width: 150px; height: 150px; margin: 0 auto 30px; border-radius: 40px; background: linear-gradient(135deg, #10b981 0%, #064e3b 100%); padding: 3px; }
         .image-inner { width: 100%; height: 100%; background: #000; border-radius: 38px; display: flex; align-items: center; justify-content: center; }
-        .profile-name { font-size: 1.8rem; margin-bottom: 8px; }
+        .profile-name { font-size: 1.8rem; margin-bottom: 8px; color: #fff; font-weight: 800; }
         .profile-title { font-size: 0.9rem; color: var(--accent-green); font-weight: 600; margin-bottom: 25px; }
         .profile-contacts { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
         .brands-title { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--text-muted); text-align: center; margin-bottom: 40px; font-weight: 800; }
-        .brands-grid { display: flex; justify-content: space-between; align-items: center; filter: grayscale(1) opacity(0.5); }
+        .brands-grid { display: flex; justify-content: space-between; align-items: center; opacity: 0.8; }
         .brand-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .brand-logo { height: 40px; object-fit: contain; }
-        .brand-text-logo { font-weight: 900; font-size: 1.2rem; height: 40px; display: flex; align-items: center; }
+        .brand-logo { height: 35px; object-fit: contain; }
+        .brand-icon-box { width: 60px; height: 35px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.7rem; color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); }
         .resume-layout { display: grid; grid-template-columns: 280px 1fr; gap: 80px; }
         .inner-nav { position: sticky; top: 120px; height: fit-content; }
         .nav-heading { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 30px; }
@@ -343,7 +360,7 @@ export default function ResumePage() {
         .competency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .content-card { padding: 30px; display: flex; gap: 20px; }
         .card-icon-box { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; color: var(--accent-green); flex-shrink: 0; }
-        .card-body h3 { font-size: 1.15rem; margin-bottom: 10px; }
+        .card-body h3 { font-size: 1.15rem; margin-bottom: 10px; color: #fff; font-weight: 700; }
         .card-body p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
         .skills-hashtag-container { display: flex; flex-wrap: wrap; gap: 15px; }
         .skill-hashtag-box { padding: 25px; flex: 1 1 300px; }
@@ -362,6 +379,7 @@ export default function ResumePage() {
         .edu-institution { color: var(--accent-green); font-weight: 600; margin: 10px 0 5px; }
         .edu-duration { font-size: 0.85rem; color: var(--text-muted); }
         .mb-80 { margin-bottom: 80px; }
+        .empty-state { color: var(--text-muted); font-style: italic; }
         @media (max-width: 1100px) {
           .hero-section { grid-template-columns: 1fr; }
           .resume-layout { grid-template-columns: 1fr; gap: 40px; }
