@@ -39,7 +39,7 @@ export default function ResumePage() {
         });
         setProfile(config);
       } else {
-        setProfile(null); // Explicitly null to trigger fallback
+        setProfile(null);
       }
 
       if (skillsRes.data) {
@@ -67,11 +67,10 @@ export default function ResumePage() {
     );
   }
 
-  // Fallback if profile not loaded from DB
   const displayProfile = (profile && Object.keys(profile).length > 0) ? profile : {
     name: 'Ahmed Rakib Uddin',
     title: 'Chief Executive Officer | Strategic Leader',
-    bio: 'A visionary Strategic Business Leader with 18+ years of expertise in driving growth and operational excellence across Fintech, Telecom, and Service industries. Proven track record in scaling businesses, optimizing costs, and building market-leading products.',
+    bio: 'Dynamic strategic professional with 18 years of leadership experience, specializing in the development of complex technological products and scalable business and growth operations across Fintech, SME, telecom and service. Blends deep technical expertise with strategic business acumen, using user behavior analysis and business modeling to drive innovation. A customer-focused leader with a proven ability to translate market needs into successful product and business strategies. Delivered measurable impact in managing very optimum cost operation through process re-engineering, automation, and governance best practices.',
     phone: '+880 1841 672 217',
     email: 'rakib_2001331022@yahoo.com',
     location: 'Dhaka, Bangladesh',
@@ -151,30 +150,28 @@ export default function ResumePage() {
         </div>
       </div>
 
-      {/* Brands Section */}
+      {/* Brands Section (Updated with all 6 logos) */}
       <div className="brands-container mb-80">
         <div className="glass-card p-40">
           <h4 className="brands-title">EXPERIENCE WITH GLOBAL & LOCAL LEADERS</h4>
           <div className="brands-grid">
             <div className="brand-item">
-              <div className="brand-icon-box">BKASH</div>
-              <span>bKash</span>
-            </div>
-            <div className="brand-item">
-              <img src="/brands/sheba-platform.png" alt="Sheba Platform" className="brand-logo" />
-              <span>Sheba Platform</span>
-            </div>
-            <div className="brand-item">
               <img src="/brands/ADN-Telecom.png" alt="ADN Telecom" className="brand-logo" />
-              <span>ADN Telecom</span>
-            </div>
-            <div className="brand-item">
-              <img src="/brands/imagine-radio.png" alt="Qubee" className="brand-logo" />
-              <span>Qubee</span>
             </div>
             <div className="brand-item">
               <img src="/brands/Ericsson-Dark.png" alt="Ericsson" className="brand-logo" />
-              <span>Ericsson</span>
+            </div>
+            <div className="brand-item">
+              <img src="/brands/imagine-radio.png" alt="Imagine Radio" className="brand-logo" />
+            </div>
+            <div className="brand-item">
+              <img src="/brands/sheba-manager.png" alt="Sheba Manager" className="brand-logo" />
+            </div>
+            <div className="brand-item">
+              <img src="/brands/sheba-pay.png" alt="Sheba Pay" className="brand-logo" />
+            </div>
+            <div className="brand-item">
+              <img src="/brands/sheba-platform.png" alt="Sheba Platform" className="brand-logo" />
             </div>
           </div>
         </div>
@@ -326,8 +323,8 @@ export default function ResumePage() {
       <style jsx>{`
         .container { max-width: 1200px; margin: 0 auto; padding: 100px 20px; }
         .hero-section { display: grid; grid-template-columns: 350px 1fr; gap: 60px; align-items: center; }
-        .hero-title { font-size: 4.5rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; color: #fff; font-weight: 900; }
-        .hero-bio { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; max-width: 700px; margin-bottom: 40px; }
+        .hero-title { font-size: 3.5rem; line-height: 1.1; margin-bottom: 30px; letter-spacing: -0.04em; color: #fff; font-weight: 900; }
+        .hero-bio { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; max-width: 750px; margin-bottom: 40px; }
         .accent-text { color: var(--accent-green); }
         .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 40px; }
         .stat-pill { padding: 20px; text-align: center; }
@@ -344,10 +341,9 @@ export default function ResumePage() {
         .profile-contacts { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
         .brands-title { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--text-muted); text-align: center; margin-bottom: 40px; font-weight: 800; }
-        .brands-grid { display: flex; justify-content: space-between; align-items: center; opacity: 0.8; }
-        .brand-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .brand-logo { height: 35px; object-fit: contain; }
-        .brand-icon-box { width: 60px; height: 35px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.7rem; color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .brands-grid { display: flex; justify-content: space-between; align-items: center; opacity: 0.7; gap: 30px; flex-wrap: wrap; }
+        .brand-item { display: flex; align-items: center; justify-content: center; }
+        .brand-logo { height: 32px; object-fit: contain; filter: brightness(0) invert(1); }
         .resume-layout { display: grid; grid-template-columns: 280px 1fr; gap: 80px; }
         .inner-nav { position: sticky; top: 120px; height: fit-content; }
         .nav-heading { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 30px; }
@@ -385,6 +381,7 @@ export default function ResumePage() {
           .resume-layout { grid-template-columns: 1fr; gap: 40px; }
           .inner-nav { position: relative; top: 0; }
           .hero-stats { grid-template-columns: 1fr 1fr; }
+          .hero-title { font-size: 2.8rem; }
         }
       `}</style>
     </div>
