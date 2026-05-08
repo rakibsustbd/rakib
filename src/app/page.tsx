@@ -395,13 +395,47 @@ export default function ResumePage() {
         .mb-80 { margin-bottom: 80px; }
         .empty-state { color: var(--text-muted); font-style: italic; }
         @media (max-width: 1100px) {
-          .hero-section { grid-template-columns: 1fr; }
+          .hero-section { grid-template-columns: 1fr; gap: 40px; }
           .resume-layout { grid-template-columns: 1fr; gap: 40px; }
-          .inner-nav { position: relative; top: 0; }
+          .inner-nav { position: sticky; top: 90px; background: #000; z-index: 100; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+          .inner-nav-list { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+          .inner-nav-list::-webkit-scrollbar { display: none; }
+          .inner-nav-item { white-space: nowrap; border-bottom: none; border-radius: 12px; padding: 10px 20px; }
           .hero-stats { grid-template-columns: 1fr 1fr; }
           .hero-title { font-size: 2.8rem; }
-          .brand-logo { height: 40px; }
-          .brand-text-logo { font-size: 1.4rem; }
+          .container { padding: 80px 20px; }
+          .brands-grid { flex-wrap: wrap; justify-content: center; gap: 30px; }
+          .brand-item { flex: 0 0 calc(33.33% - 20px); min-width: 100px; }
+        }
+
+        @media (max-width: 768px) {
+          .hero-title { font-size: 2.2rem; }
+          .hero-bio { font-size: 0.95rem; }
+          .hero-stats { grid-template-columns: 1fr 1fr; }
+          .stat-pill { padding: 15px; }
+          .stat-value { font-size: 1.4rem; }
+          .stat-label { font-size: 0.65rem; }
+          .profile-card { padding: 25px; }
+          .profile-image-placeholder { width: 120px; height: 120px; }
+          .profile-name { font-size: 1.5rem; }
+          .competency-grid, .education-grid { grid-template-columns: 1fr; }
+          .section-heading-minimal { margin-bottom: 30px; gap: 15px; }
+          .section-icon-box { width: 44px; height: 44px; }
+          .section-icon-box :global(svg) { width: 20px; height: 20px; }
+          .exp-header { flex-direction: column; gap: 10px; }
+          .exp-meta { text-align: left; }
+          .brand-item { flex: 0 0 calc(50% - 20px); }
+          .brand-logo { height: 50px !important; }
+          .brand-item:nth-child(5) .brand-logo { height: 70px !important; }
+        }
+
+        @media (max-width: 480px) {
+          .hero-title { font-size: 1.8rem; }
+          .hero-stats { grid-template-columns: 1fr; }
+          .hero-actions { flex-direction: column; width: 100%; }
+          .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+          .brand-item { flex: 0 0 100%; }
+          .brand-box { padding: 20px; }
         }
       `}</style>
     </div>

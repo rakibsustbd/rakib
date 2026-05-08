@@ -293,12 +293,37 @@ export default function PhotographyPage() {
         .page-number.active { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.2); }
 
         @media (max-width: 1000px) {
-          .story-display-wrapper { grid-template-columns: 1fr; padding: 30px; }
+          .story-display-wrapper { grid-template-columns: 1fr; padding: 30px; gap: 40px; }
           .banner-title { font-size: 3rem; }
           .story-title-main { font-size: 2.2rem; }
-          .dynamic-photo-stack { height: 300px; }
-          .item-0 { width: 160px; height: 220px; }
-          .item-1, .item-2, .item-3, .item-4, .item-5 { width: 100px; height: 140px; }
+          .dynamic-photo-stack { height: 350px; }
+          .item-0 { width: 180px; height: 240px; }
+          .item-1, .item-2, .item-3, .item-4, .item-5 { width: 110px; height: 150px; }
+          .container { padding: 80px 20px; }
+        }
+
+        @media (max-width: 768px) {
+          .photography-hero-banner { height: 280px; border-radius: 24px; padding: 15px; }
+          .banner-grid-outer { gap: 10px; }
+          .banner-title { font-size: 2.2rem; margin-bottom: 10px; }
+          .banner-subtitle { font-size: 0.7rem; letter-spacing: 0.15em; }
+          .archive-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+          .archive-filters { width: 100%; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+          .archive-filters::-webkit-scrollbar { display: none; }
+          .filter-chip { white-space: nowrap; flex-shrink: 0; }
+          .story-title-main { font-size: 1.8rem; }
+          .story-description-main { font-size: 0.95rem; }
+          .photo-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+          .banner-title { font-size: 1.8rem; }
+          .photography-hero-banner { height: 240px; }
+          .banner-grid-outer { grid-template-columns: repeat(2, 1fr); }
+          .story-display-wrapper { padding: 20px; border-radius: 24px; }
+          .dynamic-photo-stack { height: 280px; }
+          .item-0 { width: 140px; height: 190px; }
+          .item-1, .item-2, .item-3, .item-4, .item-5 { width: 80px; height: 110px; }
         }
       `}</style>
     </div>

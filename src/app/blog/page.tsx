@@ -292,8 +292,29 @@ export default function BlogPage() {
         .read-link-overlay { color: var(--accent-green); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
         .read-link-overlay:hover { gap: 14px; }
         .signature-watermark { font-family: var(--font-outfit); font-weight: 900; font-size: 2rem; color: rgba(16, 185, 129, 0.2); letter-spacing: 0.1em; user-select: none; }
-        @media (max-width: 1024px) { .category-menu-container { flex-direction: column; align-items: flex-start; gap: 24px; } .blog-search { width: 100%; } .featured-slider-item { min-width: 80vw; } .archive-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 640px) { .archive-grid { grid-template-columns: 1fr; } .category-menu { gap: 20px; overflow-x: auto; width: 100%; padding-bottom: 10px; } .category-item { font-size: 1rem; flex-shrink: 0; } }
+        @media (max-width: 1024px) { 
+          .category-menu-container { flex-direction: column; align-items: flex-start; gap: 24px; padding: 20px 0; } 
+          .blog-search { width: 100%; } 
+          .featured-slider-item { min-width: 85vw; } 
+          .archive-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } 
+          .statement-banner { padding: 30px; min-height: 180px; justify-content: center; text-align: center; }
+          .statement-text { font-size: 1rem; border-left: none; border-top: 3px solid var(--accent-green); padding: 20px 0 0 0; }
+        }
+        @media (max-width: 768px) {
+          .slider-card-image-bg { height: 350px; }
+          .slider-title { font-size: 1.4rem; }
+          .slider-overlay { padding: 25px; }
+          .category-badge-pill { top: 20px; left: 20px; font-size: 0.8rem; }
+          .featured-slider-track { gap: 20px; }
+          .featured-slider-item { min-width: 90vw; }
+        }
+        @media (max-width: 640px) { 
+          .archive-grid { grid-template-columns: 1fr; } 
+          .category-menu { gap: 25px; overflow-x: auto; width: 100%; padding-bottom: 10px; scrollbar-width: none; } 
+          .category-menu::-webkit-scrollbar { display: none; }
+          .category-item { font-size: 0.95rem; flex-shrink: 0; } 
+          .container { padding: 80px 20px; }
+        }
       `}</style>
     </div>
   );
