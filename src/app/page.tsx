@@ -289,7 +289,17 @@ export default function ResumePage() {
                        </div>
                     </div>
                     <div className="exp-body">
-                       <p>{exp.contribution}</p>
+                       {exp.contribution && exp.contribution.includes('\n') || exp.contribution.startsWith('-') || exp.contribution.startsWith('•') ? (
+                         <ul className="exp-bullets">
+                           {exp.contribution.split('\n').map((line: string, i: number) => {
+                             const cleanLine = line.replace(/^[•\-\*]\s*/, '').trim();
+                             if (!cleanLine) return null;
+                             return <li key={i}>{cleanLine}</li>;
+                           })}
+                         </ul>
+                       ) : (
+                         <p>{exp.contribution}</p>
+                       )}
                     </div>
                   </div>
                 ))}
@@ -389,6 +399,9 @@ export default function ResumePage() {
         .exp-duration { display: block; font-weight: 700; color: #fff; margin-bottom: 4px; }
         .exp-location { font-size: 0.8rem; color: var(--text-muted); }
         .exp-body p { color: var(--text-secondary); line-height: 1.7; font-size: 1rem; }
+        .exp-bullets { list-style: none; padding: 0; margin: 0; }
+        .exp-bullets li { position: relative; padding-left: 24px; color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin-bottom: 12px; }
+        .exp-bullets li::before { content: ''; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green-glow); }
         .education-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .edu-institution { color: var(--accent-green); font-weight: 600; margin: 10px 0 5px; }
         .edu-duration { font-size: 0.85rem; color: var(--text-muted); }
