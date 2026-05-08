@@ -293,27 +293,27 @@ export default function PhotographyPage() {
         .page-number.active { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.2); }
 
         @media (max-width: 1000px) {
-          .story-display-wrapper { grid-template-columns: 1fr; padding: 25px; gap: 30px; }
+          .story-display-wrapper { grid-template-columns: 1fr; padding: 25px; gap: 30px; width: 100%; box-sizing: border-box; }
           .banner-title { font-size: 2.5rem; }
           .story-title-main { font-size: 1.8rem; }
-          .dynamic-photo-stack { height: 320px; }
+          .dynamic-photo-stack { height: 320px; width: 100%; max-width: 100%; }
           .item-0 { width: 160px; height: 220px; }
           .item-1, .item-2, .item-3, .item-4, .item-5 { width: 100px; height: 140px; }
           .container { padding: 70px 15px; }
         }
 
         @media (max-width: 768px) {
-          .photography-hero-banner { height: 240px; border-radius: 20px; padding: 12px; }
-          .banner-grid-outer { gap: 8px; }
+          .photography-hero-banner { height: 240px; border-radius: 20px; padding: 12px; width: 100%; box-sizing: border-box; }
+          .banner-grid-outer { gap: 8px; width: 100%; }
           .banner-title { font-size: 1.8rem; margin-bottom: 8px; }
           .banner-subtitle { font-size: 0.6rem; letter-spacing: 0.12em; }
-          .archive-header { flex-direction: column; align-items: flex-start; gap: 20px; }
-          .archive-filters { width: 100%; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+          .archive-header { flex-direction: column; align-items: flex-start; gap: 20px; width: 100%; }
+          .archive-filters { width: 100%; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; box-sizing: border-box; }
           .archive-filters::-webkit-scrollbar { display: none; }
           .filter-chip { white-space: nowrap; flex-shrink: 0; font-size: 0.8rem; padding: 8px 18px; }
           .story-title-main { font-size: 1.5rem; }
           .story-description-main { font-size: 0.85rem; }
-          .photo-grid { grid-template-columns: 1fr; gap: 20px; }
+          .photo-grid { grid-template-columns: 1fr; gap: 20px; width: 100%; }
           .section-title { font-size: 1.6rem; }
         }
 
@@ -321,7 +321,7 @@ export default function PhotographyPage() {
           .banner-title { font-size: 1.5rem; }
           .photography-hero-banner { height: 200px; }
           .banner-grid-outer { grid-template-columns: repeat(2, 1fr); }
-          .story-display-wrapper { padding: 15px; border-radius: 20px; }
+          .story-display-wrapper { padding: 15px; border-radius: 20px; width: 100%; box-sizing: border-box; }
           .dynamic-photo-stack { height: 240px; }
           .item-0 { width: 120px; height: 160px; }
           .item-1, .item-2, .item-3, .item-4, .item-5 { width: 70px; height: 90px; }
