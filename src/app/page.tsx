@@ -434,42 +434,45 @@ export default function ResumePage() {
         }
 
         @media (max-width: 768px) {
-          .hero-title { font-size: 2.2rem; }
-          .hero-bio { font-size: 0.95rem; }
-          .hero-stats { grid-template-columns: 1fr 1fr; }
-          .stat-pill { padding: 15px; }
-          .stat-value { font-size: 1.4rem; }
-          .stat-label { font-size: 0.65rem; }
-          .profile-card { padding: 25px; }
-          .profile-image-placeholder { width: 120px; height: 120px; }
-          .profile-name { font-size: 1.5rem; }
+          .hero-title { font-size: 1.8rem; margin-bottom: 20px; white-space: normal; }
+          .hero-bio { font-size: 0.85rem; line-height: 1.6; }
+          .hero-stats { grid-template-columns: 1fr 1fr; gap: 12px; }
+          .stat-pill { padding: 12px; }
+          .stat-value { font-size: 1.2rem; }
+          .stat-label { font-size: 0.6rem; }
+          .profile-card { padding: 20px; margin-bottom: 20px; }
+          .profile-image-placeholder { width: 100px; height: 100px; margin-bottom: 20px; }
+          .profile-name { font-size: 1.3rem; }
+          .profile-title { font-size: 0.8rem; margin-bottom: 15px; }
           
-          .competency-grid, .education-grid { grid-template-columns: 1fr; gap: 20px; }
-          .content-card { padding: 24px; flex-direction: column; gap: 15px; align-items: flex-start; width: 100%; max-width: 100%; overflow: hidden; }
-          .card-body h3 { font-size: 1.1rem; line-height: 1.4; }
-          .card-body p { font-size: 0.9rem; }
+          .competency-grid, .education-grid { grid-template-columns: 1fr; gap: 15px; }
+          .content-card { padding: 20px; flex-direction: column; gap: 12px; align-items: flex-start; width: 100%; max-width: 100%; overflow: hidden; }
+          .card-body h3 { font-size: 1rem; line-height: 1.4; }
+          .card-body p { font-size: 0.85rem; }
           
-          .section-heading-minimal { margin-bottom: 30px; gap: 15px; }
-          .section-icon-box { width: 44px; height: 44px; }
-          .section-icon-box :global(svg) { width: 20px; height: 20px; }
-          .exp-header { flex-direction: column; gap: 10px; }
+          .section-heading-minimal { margin-bottom: 25px; gap: 12px; }
+          .section-icon-box { width: 40px; height: 40px; }
+          .section-icon-box :global(svg) { width: 18px; height: 18px; }
+          .exp-header { flex-direction: column; gap: 8px; }
           .exp-meta { text-align: left; }
-          .brand-item { flex: 0 0 calc(50% - 20px); }
-          .brand-logo { height: 50px !important; }
-          .brand-item:nth-child(5) .brand-logo { height: 70px !important; }
+          .brand-item { flex: 0 0 calc(50% - 15px); }
+          .brand-logo { height: 40px !important; }
+          .brand-item:nth-child(5) .brand-logo { height: 60px !important; }
           
-          .skills-hashtag-container { gap: 10px; }
-          .skill-hashtag-box { padding: 20px; flex: 1 1 100%; }
+          .skills-hashtag-container { gap: 8px; }
+          .skill-hashtag-box { padding: 15px; flex: 1 1 100%; }
+          .skill-hashtag { font-size: 1rem; }
+          .skill-hashtag-desc { font-size: 0.8rem; }
         }
 
         @media (max-width: 480px) {
-          .hero-title { font-size: 1.8rem; }
+          .hero-title { font-size: 1.6rem; }
           .hero-stats { grid-template-columns: 1fr; }
-          .hero-actions { flex-direction: column; width: 100%; }
-          .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+          .hero-actions { flex-direction: column; width: 100%; gap: 12px; }
+          .btn-primary, .btn-secondary { width: 100%; justify-content: center; padding: 14px 24px; font-size: 0.9rem; }
           .brand-item { flex: 0 0 100%; }
-          .brand-box { padding: 20px; }
-          .inner-nav { top: 60px; margin: 0 -15px 30px; padding: 15px; }
+          .brand-box { padding: 15px; }
+          .inner-nav { top: 60px; margin: 0 -15px 25px; padding: 12px; }
         }
       `}</style>
     </div>

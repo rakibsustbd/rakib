@@ -80,17 +80,17 @@ export default function Navbar() {
         .mobile-menu-btn { background: none; border: none; color: #fff; cursor: pointer; display: none; padding: 8px; border-radius: 12px; }
         .mobile-menu-btn:hover { background: rgba(255,255,255,0.05); }
         
-        .mobile-overlay { position: fixed; inset: 0; background: #050505; z-index: 5000; display: flex; flex-direction: column; padding: 30px; }
-        .mobile-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
+        .mobile-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; flex-direction: column; padding: 25px; }
+        .mobile-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         .close-btn { background: none; border: none; color: #fff; cursor: pointer; }
         .mobile-nav-list { list-style: none; padding: 0; flex: 1; }
-        .mobile-nav-link { display: flex; justify-content: space-between; align-items: center; font-size: 1.8rem; font-weight: 800; padding: 20px 0; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .mobile-nav-link { display: flex; justify-content: space-between; align-items: center; font-size: 1.5rem; font-weight: 800; padding: 18px 0; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .mobile-nav-link.active { color: var(--accent-green); }
-        .link-arrow { opacity: 0; transform: translateX(-10px); transition: all 0.3s; color: var(--accent-green); }
+        .link-arrow { opacity: 0.6; transform: translateX(-10px); transition: all 0.3s; color: var(--accent-green); }
         .mobile-nav-link:hover .link-arrow { opacity: 1; transform: translateX(0); }
         
-        .mobile-menu-footer { margin-top: auto; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .mobile-menu-footer p { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 20px; font-weight: 700; }
+        .mobile-menu-footer { margin-top: auto; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .mobile-menu-footer p { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 15px; font-weight: 700; }
 
         @media (max-width: 768px) {
           .nav-links { display: none; }
