@@ -362,7 +362,7 @@ export default function ResumePage() {
         .brands-grid { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; padding: 0; }
         .brands-grid::-webkit-scrollbar { display: none; }
         .brand-item { display: flex; align-items: center; justify-content: center; flex: 1; min-width: 100px; }
-        .brand-logo { height: 60px; width: auto; max-width: 150px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
+        .brand-logo { height: 60px; width: auto; max-width: 150px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; display: block; }
         /* Boost size for smaller logos */
         .brand-item:nth-child(1) .brand-logo, 
         .brand-item:nth-child(2) .brand-logo, 
@@ -383,8 +383,8 @@ export default function ResumePage() {
         .competency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .content-card { padding: 30px; display: flex; gap: 20px; }
         .card-icon-box { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; color: var(--accent-green); flex-shrink: 0; }
-        .card-body h3 { font-size: 1.15rem; margin-bottom: 10px; color: #fff; font-weight: 700; }
-        .card-body p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+        .card-body h3 { font-size: 1.15rem; margin-bottom: 10px; color: #fff; font-weight: 700; word-wrap: break-word; overflow-wrap: break-word; }
+        .card-body p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; }
         .skills-hashtag-container { display: flex; flex-wrap: wrap; gap: 15px; }
         .skill-hashtag-box { padding: 25px; flex: 1 1 300px; }
         .skill-hashtag { color: var(--accent-green); font-weight: 800; font-size: 1.1rem; display: block; margin-bottom: 10px; }
@@ -397,9 +397,9 @@ export default function ResumePage() {
         .exp-meta { text-align: right; }
         .exp-duration { display: block; font-weight: 700; color: #fff; margin-bottom: 4px; }
         .exp-location { font-size: 0.8rem; color: var(--text-muted); }
-        .exp-body p { color: var(--text-secondary); line-height: 1.7; font-size: 1rem; }
-        .exp-bullets { list-style: none; padding: 0; margin: 0; }
-        .exp-bullets li { position: relative; padding-left: 24px; color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin-bottom: 12px; }
+        .exp-body p { color: var(--text-secondary); line-height: 1.7; font-size: 1rem; word-wrap: break-word; overflow-wrap: break-word; }
+        .exp-bullets { list-style: none; padding: 0; margin: 0; width: 100%; }
+        .exp-bullets li { position: relative; padding-left: 24px; color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin-bottom: 12px; word-wrap: break-word; overflow-wrap: break-word; }
         .exp-bullets li::before { content: ''; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green-glow); }
         .education-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .edu-institution { color: var(--accent-green); font-weight: 600; margin: 10px 0 5px; }
@@ -448,9 +448,8 @@ export default function ResumePage() {
           .profile-image-placeholder { width: 90px; height: 90px; margin-bottom: 16px; }
           .profile-name { font-size: 1.2rem; }
           .profile-title { font-size: 0.78rem; margin-bottom: 14px; }
-          .brand-box { padding: 16px; width: 100%; box-sizing: border-box; }
           .brands-grid { flex-wrap: wrap; justify-content: center; gap: 16px; }
-          .brand-item { flex: 0 0 calc(50% - 8px); min-width: 0; box-sizing: border-box; }
+          .brand-item { flex: 0 0 calc(33.33% - 11px); min-width: 0; box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
           .brand-logo { height: 36px !important; max-width: 100%; object-fit: contain; }
           .brand-item:nth-child(1) .brand-logo, .brand-item:nth-child(2) .brand-logo, .brand-item:nth-child(3) .brand-logo { height: 46px !important; }
           .brand-item:nth-child(5) .brand-logo { height: 56px !important; }

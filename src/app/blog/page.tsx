@@ -262,7 +262,7 @@ export default function BlogPage() {
       <style jsx>{`
         .blog-archive-section { margin-top: 100px; margin-bottom: 120px; }
         .archive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; align-items: stretch; }
-        .archive-card { display: flex; flex-direction: column; height: 100%; background: rgba(255,255,255,0.01); padding: 16px; border-radius: 24px; border: 1px solid transparent; transition: all 0.4s ease; }
+        .archive-card { display: flex; flex-direction: column; height: 100%; background: rgba(255,255,255,0.01); padding: 16px; border-radius: 24px; border: 1px solid transparent; transition: all 0.4s ease; overflow: hidden; }
         .archive-card:hover { background: rgba(255,255,255,0.03); border-color: rgba(16, 185, 129, 0.2); transform: translateY(-8px); }
         .archive-img-wrap { width: 100%; height: 240px; border-radius: 16px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-color); flex-shrink: 0; background-color: #111; }
         .statement-banner { width: 100%; min-height: 220px; margin-bottom: 60px; position: relative; background: url('/quote_bg_v2.png') center/cover no-repeat; display: flex; align-items: center; justify-content: flex-end; padding: 40px 60px; border-radius: 24px; border: 1px solid rgba(16, 185, 129, 0.1); overflow: hidden; }
