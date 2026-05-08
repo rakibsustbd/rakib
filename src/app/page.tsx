@@ -150,20 +150,11 @@ export default function ResumePage() {
         </div>
       </div>
 
-      {/* Brands Section (Updated with all 6 logos) */}
+      {/* Brands Section (Ordered and Sized Up) */}
       <div className="brands-container mb-80">
         <div className="glass-card p-40">
           <h4 className="brands-title">EXPERIENCE WITH GLOBAL & LOCAL LEADERS</h4>
           <div className="brands-grid">
-            <div className="brand-item">
-              <img src="/brands/ADN-Telecom.png" alt="ADN Telecom" className="brand-logo" />
-            </div>
-            <div className="brand-item">
-              <img src="/brands/Ericsson-Dark.png" alt="Ericsson" className="brand-logo" />
-            </div>
-            <div className="brand-item">
-              <img src="/brands/imagine-radio.png" alt="Imagine Radio" className="brand-logo" />
-            </div>
             <div className="brand-item">
               <img src="/brands/sheba-manager.png" alt="Sheba Manager" className="brand-logo" />
             </div>
@@ -172,6 +163,18 @@ export default function ResumePage() {
             </div>
             <div className="brand-item">
               <img src="/brands/sheba-platform.png" alt="Sheba Platform" className="brand-logo" />
+            </div>
+            <div className="brand-item">
+              <img src="/brands/ADN-Telecom.png" alt="ADN Telecom" className="brand-logo" />
+            </div>
+            <div className="brand-item">
+              <img src="/brands/imagine-radio.png" alt="Imagine Radio" className="brand-logo" />
+            </div>
+            <div className="brand-item">
+              <div className="brand-text-logo">QUBEE</div>
+            </div>
+            <div className="brand-item">
+              <img src="/brands/Ericsson-Dark.png" alt="Ericsson" className="brand-logo" />
             </div>
           </div>
         </div>
@@ -341,10 +344,11 @@ export default function ResumePage() {
         .profile-contacts { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .contact-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
         .brands-title { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--text-muted); text-align: center; margin-bottom: 40px; font-weight: 800; }
-        .brands-grid { display: flex; justify-content: space-around; align-items: center; gap: 40px; flex-wrap: wrap; padding: 20px 0; }
-        .brand-item { display: flex; align-items: center; justify-content: center; min-width: 120px; }
-        .brand-logo { height: 45px; max-width: 140px; object-fit: contain; opacity: 0.6; transition: all 0.3s ease; }
-        .brand-logo:hover { opacity: 1; transform: scale(1.05); }
+        .brands-grid { display: flex; justify-content: space-around; align-items: center; gap: 50px; flex-wrap: wrap; padding: 30px 0; }
+        .brand-item { display: flex; align-items: center; justify-content: center; min-width: 140px; }
+        .brand-logo { height: 60px; max-width: 180px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; transition: all 0.3s ease; }
+        .brand-logo:hover { opacity: 1; transform: scale(1.1); filter: none; }
+        .brand-text-logo { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.05em; color: #fff; opacity: 0.8; }
         .resume-layout { display: grid; grid-template-columns: 280px 1fr; gap: 80px; }
         .inner-nav { position: sticky; top: 120px; height: fit-content; }
         .nav-heading { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 30px; }
@@ -383,6 +387,8 @@ export default function ResumePage() {
           .inner-nav { position: relative; top: 0; }
           .hero-stats { grid-template-columns: 1fr 1fr; }
           .hero-title { font-size: 2.8rem; }
+          .brand-logo { height: 40px; }
+          .brand-text-logo { font-size: 1.4rem; }
         }
       `}</style>
     </div>
