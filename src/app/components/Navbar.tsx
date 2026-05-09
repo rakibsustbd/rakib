@@ -80,7 +80,7 @@ export default function Navbar() {
         .mobile-menu-btn { background: none; border: none; color: #fff; cursor: pointer; display: none; padding: 8px; border-radius: 12px; }
         .mobile-menu-btn:hover { background: rgba(255,255,255,0.05); }
         
-        .mobile-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 5000; display: flex; flex-direction: column; padding: 25px; }
+        .mobile-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 5000; display: flex; flex-direction: column; padding: 30px; }
         .mobile-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         .close-btn { background: none; border: none; color: #fff; cursor: pointer; }
         .mobile-nav-list { list-style: none; padding: 0; flex: 1; }
