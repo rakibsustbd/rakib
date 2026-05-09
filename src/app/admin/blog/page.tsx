@@ -143,24 +143,29 @@ export default function AdminBlog() {
   const handleDelete = async (id: any) => {
     if (!confirm('Are you sure you want to delete this story?')) return;
     
-    // Explicitly cast to number for bigint compatibility
     const numericId = Number(id);
     console.log("Attempting to delete post with ID:", numericId);
 
     try {
-      const { error } = await supabase
+      const response = await supabase
         .from('posts')
         .delete()
         .eq('id', numericId);
+      
+      const { error, status, statusText } = response;
+
+      console.log("Delete Response:", response);
 
       if (error) {
         console.error("Delete error:", error);
-        alert(`Failed to delete: ${error.message}`);
-      } else {
-        // Optimistically update local state for instant feedback
+        alert(`Failed to delete (Status ${status}): ${error.message || statusText}`);
+      } else if (status === 204 || status === 200) {
+        // Successful request
         setBlogs(prev => prev.filter(b => Number(b.id) !== numericId));
-        alert("Story deleted successfully.");
-        fetchBlogs(); // Then refresh properly
+        alert(`Story deleted successfully (Status ${status}).`);
+        fetchBlogs();
+      } else {
+        alert(`Unexpected response status: ${status}. The row might not have been deleted.`);
       }
     } catch (e: any) {
       console.error("Delete exception:", e);
