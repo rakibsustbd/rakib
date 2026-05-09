@@ -140,10 +140,26 @@ export default function AdminBlog() {
     setIsUpdatingFeatured(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: any) => {
     if (!confirm('Are you sure you want to delete this story?')) return;
-    await supabase.from('posts').delete().eq('id', id);
-    fetchBlogs();
+    
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error("Delete error:", error);
+        alert(`Failed to delete: ${error.message}`);
+      } else {
+        alert("Story deleted successfully.");
+        fetchBlogs();
+      }
+    } catch (e: any) {
+      console.error("Delete exception:", e);
+      alert(`An error occurred: ${e.message}`);
+    }
   };
 
   const featuredBlogs = blogs.filter(b => featuredIds.includes(String(b.id)));

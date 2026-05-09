@@ -9,8 +9,11 @@ import {
   Camera, 
   Layers,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  LogOut
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Overview', href: '/admin' },
@@ -22,16 +25,23 @@ const menuItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_auth');
+    router.push('/admin/login');
+  };
 
   return (
     <aside className="admin-sidebar glass-card">
       <div className="sidebar-brand">
-        <div className="brand-logo">A</div>
+        <div className="brand-logo">R</div>
         <div className="brand-info">
-          <h3>Antigravity</h3>
+          <h3>Rakib Portfolio</h3>
           <span>ADMIN PANEL</span>
         </div>
       </div>
+
 
       <nav className="sidebar-nav">
         {menuItems.map((item) => {
@@ -60,6 +70,14 @@ export default function AdminSidebar() {
         </span>
         <span className="nav-label">View Live Site</span>
       </Link>
+
+      <button onClick={handleLogout} className="nav-item logout-btn">
+        <span className="nav-icon-container">
+          <LogOut size={20} />
+        </span>
+        <span className="nav-label">Logout</span>
+      </button>
+
 
       <style jsx>{`
         .admin-sidebar {
@@ -164,6 +182,21 @@ export default function AdminSidebar() {
           margin-top: auto;
           color: var(--text-muted);
         }
+
+        .logout-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #ff4b4b;
+          width: 100%;
+          text-align: left;
+        }
+
+        .logout-btn:hover {
+          background: rgba(255, 75, 75, 0.1);
+          color: #ff4b4b;
+        }
+
       `}</style>
     </aside>
   );

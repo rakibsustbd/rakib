@@ -1,18 +1,62 @@
-'use client';
-
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import AdminSidebar from '@/app/components/AdminSidebar';
+import { Loader2 } from 'lucide-react';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Check if we are on the login page
+    if (pathname === '/admin/login') {
+      setIsAuthenticated(true);
+      return;
+    }
+
+    const auth = localStorage.getItem('admin_auth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+      router.push('/admin/login');
+    }
+  }, [pathname, router]);
+
+  if (isAuthenticated === null && pathname !== '/admin/login') {
+    return (
+      <div className="auth-loading">
+        <Loader2 className="animate-spin" size={48} color="#10b981" />
+        <style jsx>{`
+          .auth-loading {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // If on login page, just render children without sidebar
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
   return (
     <div className="admin-layout-wrapper">
       <AdminSidebar />
       <main className="admin-main-content">
         {children}
       </main>
+
 
       <style jsx global>{`
         .admin-modal-overlay {
