@@ -141,35 +141,40 @@ export default function AdminBlog() {
   };
 
   const handleDelete = async (id: any) => {
-    if (!confirm('Are you sure you want to delete this story?')) return;
+    console.log("Delete triggered for ID:", id);
+    if (!confirm(`Are you sure you want to delete story with ID: ${id}?`)) return;
     
     const numericId = Number(id);
-    console.log("Attempting to delete post with ID:", numericId);
+    if (isNaN(numericId)) {
+      alert("Invalid Post ID. It must be a number.");
+      return;
+    }
 
     try {
+      console.log("Sending delete request to Supabase for ID:", numericId);
       const response = await supabase
         .from('posts')
         .delete()
         .eq('id', numericId);
       
       const { error, status, statusText } = response;
-
-      console.log("Delete Response:", response);
+      console.log("Raw Supabase Response:", response);
 
       if (error) {
-        console.error("Delete error:", error);
-        alert(`Failed to delete (Status ${status}): ${error.message || statusText}`);
+        console.error("Supabase Delete Error:", error);
+        alert(`Database Error (Status ${status}): ${error.message || statusText}`);
       } else if (status === 204 || status === 200) {
-        // Successful request
+        console.log("Delete successful in database.");
+        // Immediate local filter
         setBlogs(prev => prev.filter(b => Number(b.id) !== numericId));
-        alert(`Story deleted successfully (Status ${status}).`);
+        alert(`Story ID ${numericId} deleted successfully.`);
         fetchBlogs();
       } else {
-        alert(`Unexpected response status: ${status}. The row might not have been deleted.`);
+        alert(`Unexpected Response Status: ${status}. Row may not have been deleted.`);
       }
     } catch (e: any) {
-      console.error("Delete exception:", e);
-      alert(`An error occurred: ${e.message}`);
+      console.error("Client Exception during delete:", e);
+      alert(`Critical Error: ${e.message}`);
     }
   };
 
@@ -242,6 +247,28 @@ export default function AdminBlog() {
           <div className="input-with-icon">
             <Search size={16} />
             <input type="text" className="admin-input" placeholder="Search by title..." />
+          </div>
+        </div>
+
+        <div className="debug-delete-group">
+          <label>Debug Delete (Enter ID)</label>
+          <div className="input-with-icon" style={{ gap: '10px' }}>
+            <input 
+              type="number" 
+              className="admin-input" 
+              placeholder="Post ID" 
+              id="debug-id-input"
+            />
+            <button 
+              className="admin-btn-primary" 
+              style={{ background: '#ff4b4b', color: '#fff' }}
+              onClick={() => {
+                const input = document.getElementById('debug-id-input') as HTMLInputElement;
+                if (input.value) handleDelete(input.value);
+              }}
+            >
+              Force Delete
+            </button>
           </div>
         </div>
 
