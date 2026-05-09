@@ -315,10 +315,18 @@ export default function PhotographyPage() {
           .banner-title { font-size: 1.6rem; margin-bottom: 8px; }
           .banner-subtitle { font-size: 0.58rem; letter-spacing: 0.1em; }
           .photography-stories-slider-container { margin-bottom: 40px; }
-          .story-display-wrapper { padding: 16px; gap: 20px; border-radius: 18px; }
-          .story-visual-side { display: none; }
-          .story-title-main { font-size: 1.4rem; margin-bottom: 14px; }
-          .story-description-main { font-size: 0.85rem; margin-bottom: 20px; }
+          .story-display-wrapper { padding: 0; gap: 0; border-radius: 24px; flex-direction: column; min-height: auto; width: 100%; box-sizing: border-box; overflow: hidden; }
+          .story-visual-side { display: block; width: 100%; height: 280px; position: relative; background: rgba(255,255,255,0.02); order: -1; }
+          .story-content-side { padding: 30px 20px; width: 100%; box-sizing: border-box; }
+          .story-title-main { font-size: 1.45rem; margin-bottom: 16px; line-height: 1.3; }
+          .story-description-main { font-size: 0.95rem; margin-bottom: 24px; color: #d1d5db; }
+          .dynamic-photo-stack { height: 100%; width: 100%; transform: scale(0.9); }
+          .item-0 { width: 50%; height: 65%; }
+          .item-1 { width: 35%; height: 50%; }
+          .item-2 { width: 30%; height: 35%; }
+          .item-3 { width: 45%; height: 38%; }
+          .item-4 { width: 40%; height: 55%; }
+          .item-5 { width: 28%; height: 28%; }
           .archive-header { flex-direction: column; align-items: flex-start; gap: 16px; width: 100%; }
           .archive-filters { width: 100%; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; display: flex; box-sizing: border-box; }
           .archive-filters::-webkit-scrollbar { display: none; }
