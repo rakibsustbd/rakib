@@ -143,18 +143,24 @@ export default function AdminBlog() {
   const handleDelete = async (id: any) => {
     if (!confirm('Are you sure you want to delete this story?')) return;
     
+    // Explicitly cast to number for bigint compatibility
+    const numericId = Number(id);
+    console.log("Attempting to delete post with ID:", numericId);
+
     try {
       const { error } = await supabase
         .from('posts')
         .delete()
-        .eq('id', id);
+        .eq('id', numericId);
 
       if (error) {
         console.error("Delete error:", error);
         alert(`Failed to delete: ${error.message}`);
       } else {
+        // Optimistically update local state for instant feedback
+        setBlogs(prev => prev.filter(b => Number(b.id) !== numericId));
         alert("Story deleted successfully.");
-        fetchBlogs();
+        fetchBlogs(); // Then refresh properly
       }
     } catch (e: any) {
       console.error("Delete exception:", e);
