@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahmed Rakib Uddin - CV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #10b981;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --bg: #ffffff;
+            --sidebar-bg: #f9fafb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background: var(--bg);
+            line-height: 1.5;
+            padding: 40px;
+        }
+
+        .cv-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-info h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #000;
+        }
+
+        .header-info p {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .contact-header {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar {
+            background: var(--sidebar-bg);
+            padding: 30px;
+            border-radius: 20px;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .sidebar-item {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .sidebar-item p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .main-content h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #000;
+        }
+
+        .main-content h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .profile-text {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            text-align: justify;
+        }
+
+        .experience-item {
+            margin-bottom: 35px;
+        }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .exp-role {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .exp-company {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .exp-meta {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .exp-contribution {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            font-style: italic;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .exp-bullets {
+            list-style: none;
+        }
+
+        .exp-bullets li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .exp-bullets li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        @media print {
+            body { padding: 0; }
+            .cv-container { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-info">
+            <h1>Ahmed Rakib Uddin</h1>
+            <p>Chief Executive Officer | Strategic Leader</p>
+        </div>
+        <div class="contact-header">
+            <div>+880 1841 672 217</div>
+            <div>rakib_2001331022@yahoo.com</div>
+            <div>Dhaka, Bangladesh</div>
+        </div>
+    </header>
+
+    <div class="cv-container">
+        <aside class="sidebar">
+            <section class="sidebar-section">
+                <h3>Core Competencies</h3>
+                <div class="sidebar-item">
+                    <h4>Business Transformation</h4>
+                    <p>Driving large-scale transformations and restoring profitability.</p>
+                </div>
+                <div class="sidebar-item">
+                    <h4>Growth Strategy</h4>
+                    <p>Executing strategies for new revenue streams and products.</p>
+                </div>
+                <div class="sidebar-item">
+                    <h4>Product Innovation</h4>
+                    <p>Developing scalable data-driven product strategies.</p>
+                </div>
+                <div class="sidebar-item">
+                    <h4>Strategic Partnerships</h4>
+                    <p>Building solid growth channels through partnerships.</p>
+                </div>
+            </section>
+
+            <section class="sidebar-section">
+                <h3>Education</h3>
+                <div class="sidebar-item">
+                    <h4>MBA in Finance</h4>
+                    <p>East West University | 2010 – 2012</p>
+                </div>
+                <div class="sidebar-item">
+                    <h4>B.Sc. in CSE</h4>
+                    <p>SUST | 2002 – 2007</p>
+                </div>
+            </section>
+
+            <section class="sidebar-section">
+                <h3>Certifications</h3>
+                <div class="sidebar-item">
+                    <h4>PRINCE2® Practitioner</h4>
+                </div>
+                <div class="sidebar-item">
+                    <h4>PRINCE2 Foundation</h4>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-content">
+            <h2>Executive Profile</h2>
+            <p class="profile-text">
+                Dynamic strategic professional with 18 years of leadership experience, specializing in the development of complex technological products and scalable business and growth operations across Fintech, SME, telecom and service. Blends deep technical expertise with strategic business acumen, using user behavior analysis and business modeling to drive innovation. A customer-focused leader with a proven ability to translate market needs into successful product and business strategies.
+            </p>
+
+            <h2>Professional Experience</h2>
+
+            <div class="experience-item">
+                <div class="exp-header">
+                    <div>
+                        <div class="exp-role">Chief Executive Officer</div>
+                        <div class="exp-company">Sheba Merchants Ltd</div>
+                    </div>
+                    <div class="exp-meta">
+                        <div>Feb 2025 – Present</div>
+                        <div>Dhaka, Bangladesh</div>
+                    </div>
+                </div>
+                <span class="exp-contribution">Product transformation and modernization.</span>
+                <ul class="exp-bullets">
+                    <li>Modernized and launched digital payment collection service, resulting in 10x GTV growth in 5 months.</li>
+                    <li>Achieved 1.5x subscription revenue growth in 6 months.</li>
+                    <li>Secured 3x Merchant number growth, securing the north star metric.</li>
+                    <li>Reduced high-value merchant churn rate from 9% to 4%.</li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="exp-header">
+                    <div>
+                        <div class="exp-role">Deputy Chief Executive Officer</div>
+                        <div class="exp-company">Sheba Fintech Limited</div>
+                    </div>
+                    <div class="exp-meta">
+                        <div>Jun 2023 – Jan 2025</div>
+                        <div>Dhaka, Bangladesh</div>
+                    </div>
+                </div>
+                <span class="exp-contribution">Technological and compliance readiness for PSP license.</span>
+                <ul class="exp-bullets">
+                    <li>Completed all necessary readiness for Bangladesh Bank Audit for PSP license at first attempt.</li>
+                    <li>Partnered with major banks, MFS, and PSOs for eMoney operations.</li>
+                    <li>Launched Sheba Pay wallet commercially, migrating all merchants.</li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="exp-header">
+                    <div>
+                        <div class="exp-role">Chief Strategy Officer</div>
+                        <div class="exp-company">Sheba Platform Limited</div>
+                    </div>
+                    <div class="exp-meta">
+                        <div>Oct 2022 – Jun 2023</div>
+                    </div>
+                </div>
+                <ul class="exp-bullets">
+                    <li>Optimized 75% Technology cost and 60% Business Operation cost.</li>
+                    <li>Maintained business attractiveness to investors through double growth.</li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="exp-header">
+                    <div>
+                        <div class="exp-role">Co-founder and COO</div>
+                        <div class="exp-company">Imagine Radio</div>
+                    </div>
+                    <div class="exp-meta">
+                        <div>Jan 2019 – Oct 2020</div>
+                    </div>
+                </div>
+                <ul class="exp-bullets">
+                    <li>Built the first local cross-platform music streaming application.</li>
+                    <li>Reached 100K monthly active users within 1 year.</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

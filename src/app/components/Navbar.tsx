@@ -10,7 +10,8 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { href: '/', label: 'Professional Resume' },
+    { href: '/', label: 'Home' },
+    { href: '/resume', label: 'Professional Resume' },
     { href: '/blog', label: 'Thoughts & Blog' },
     { href: '/photography', label: 'Photography' },
   ];
