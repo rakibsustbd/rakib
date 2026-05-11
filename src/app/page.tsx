@@ -329,21 +329,34 @@ export default function LandingPage() {
         .hero-actions { display: flex; gap: 24px; align-items: center; }
 
         .hero-visual { position: relative; display: flex; justify-content: flex-end; padding-left: 40px; }
-        .portrait-container { position: relative; width: 100%; max-width: 520px; aspect-ratio: 1/1.1; border-radius: 48px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #111; }
-        .hero-portrait { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.05); }
-        .portrait-glow { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(16, 185, 129, 0.1) 0%, transparent 80%); z-index: 1; }
-        .portrait-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #000 0%, transparent 35%); z-index: 2; }
+        .portrait-container { 
+          position: relative; 
+          width: 100%; 
+          max-width: 500px; 
+          aspect-ratio: 3/4; 
+          border-radius: 40px; 
+          overflow: hidden; 
+          border: 1px solid rgba(255,255,255,0.12); 
+          background: #0a0a0a; 
+          box-shadow: 0 40px 100px -20px rgba(0,0,0,0.7); 
+        }
+        .hero-portrait { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; filter: contrast(1.02) brightness(1.05); transition: transform 0.5s ease; }
+        .portrait-container:hover .hero-portrait { transform: scale(1.03); }
+        .portrait-glow { position: absolute; inset: 0; background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 60%); z-index: 1; pointer-events: none; }
+        .portrait-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 30%); z-index: 2; pointer-events: none; }
         
         .experience-badge { 
           position: absolute; 
-          bottom: 40px; 
-          left: 0px; 
-          padding: 28px; 
-          border-radius: 28px; 
+          bottom: 30px; 
+          left: -20px; 
+          padding: 24px 32px; 
+          border-radius: 24px; 
           text-align: center; 
           z-index: 10;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-          background: rgba(10, 10, 10, 0.8);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+          background: rgba(15, 15, 15, 0.85);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.1);
         }
         .badge-number { display: block; font-size: 3rem; font-weight: 900; color: var(--accent-green); line-height: 1; margin-bottom: 4px; }
         .badge-text { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; }
